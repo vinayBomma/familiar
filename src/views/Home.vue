@@ -1,10 +1,10 @@
 <template>
   <div style="height: 750px;">
-    <div class="info">
+    <!-- <div class="info">
       <span>Center: {{ center }}</span>
       <span>Zoom: {{ zoom }}</span>
       <span>Bounds: {{ bounds }}</span>
-    </div>
+    </div> -->
     <l-map
       style="height: 80%; width: 80%"
       :zoom="zoom"
@@ -41,12 +41,12 @@ export default {
    data () {
     return {
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      zoom: 3,
-      center: [47.413220, -1.219482],
+      zoom: 18,
+      center: [19.01109, 72.82831],
       bounds: null,
-      markerLatLng: [47.413220, -1.219482],
+      markerLatLng: [19.01109, 72.82831],
       defIcon: L.icon({
-        iconUrl: 'https://www.flaticon.com/svg/static/icons/svg/3048/3048122.svg',
+        iconUrl: 'men.svg',
         iconSize: [38, 95],
       })
     };
