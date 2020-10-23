@@ -1,13 +1,41 @@
 <template>
-  <v-btn>
-    Login with<v-icon right>$vuetify.icons.google</v-icon>
-  </v-btn>
+  <div>
+    <v-btn aria-label="Login" class="ma-2 elevation-4" @click="googleLogin">
+      Login with<v-icon right>$vuetify.icons.google</v-icon>
+    </v-btn>
+    <!-- <v-btn
+      class="elevation-10"
+      aria-label="Sign In"
+      @click="googleLogin"
+    >
+      <img src="../../public/google.png" class="mr-2" alt="Google" />Sign In
+    </v-btn> -->
+  </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
 
 <script>
-export default {
-    name: 'googleIcon'
+
+import firebase from 'firebase'
+import {db} from '@/configFirebase.js'
+
+export default {  
+  name: "googleIcon",
+  data(){
+    return{
+
+    }
+
+  },
+  methods: {
+    googleLogin(){
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+      firebase.auth().signInWithRedirect(provider)
+    }
+  }
 };
 </script>
