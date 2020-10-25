@@ -28,6 +28,7 @@
 // @ is an alias to /src
 // import HelloWorld from '@/components/HelloWorld.vue'
 import {LMap, LTileLayer, LMarker, LPopup} from 'vue2-leaflet';
+import firebase from 'firebase'
 
 export default {
   name: 'Home',
@@ -45,9 +46,12 @@ export default {
       center: [19.01109, 72.82831],
       bounds: null,
       markerLatLng: [19.01109, 72.82831],
+      markerStyle: {
+        
+      },
       defIcon: L.icon({
-        iconUrl: 'men.svg',
-        iconSize: [38, 95],
+        iconUrl: 'https://lh3.googleusercontent.com/a-/AOh14GgSL9H-4yXSZcWrfQ3XKMBQZaqN70s6PR0mhkW8Zw=s96-c',
+        iconSize: [50, 50],
       })
     };
   },
@@ -61,6 +65,12 @@ export default {
     boundsUpdated (bounds) {
       this.bounds = bounds;
     }
-  }
+  },
+  // mounted(){
+  //   let user = firebase.auth().currentUser;
+  //   console.log(user.displayName);
+  //   console.log(user.photoURL)
+  //   this.defIcon.iconUrl = user.photoURL
+  // }
 }
 </script>
