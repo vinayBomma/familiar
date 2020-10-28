@@ -1,40 +1,32 @@
 <template>
   <v-app>
-    <div id="nav">
+    <Navbar></Navbar>
+    <v-main>
+      <router-view />
+    </v-main>
+    <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>  |
-      <router-link to="/login">Login</router-link>
-    </div>
-    
+      <router-link to="/login">Login</router-link>  |
+      <router-link to="/chats">Chats</router-link>
+    </div> -->
 
     <!-- <v-main> -->
-      <!-- <HelloWorld/> -->
+    <!-- <HelloWorld/> -->
     <!-- </v-main>  -->
-    <router-view/>
   </v-app>
 </template>
 
-<style scoped>
-#nav {
-  padding: 30px;
-}
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
 
 <script>
 // import HelloWorld from './components/HelloWorld';
+import Navbar from "./components/Navbar";
 
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    // HelloWorld,
+    Navbar,
   },
 
   data: () => ({

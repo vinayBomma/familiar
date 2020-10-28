@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Chats from '../views/Chats.vue'
 import firebase from 'firebase/app'
 
 Vue.use(VueRouter)
@@ -9,7 +10,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Home',
+    name: 'home',
     component: Home,
     meta: {
       requiresAuth: true
@@ -17,7 +18,7 @@ const routes = [
   },
   {
     path: '/about',
-    name: 'About',
+    name: 'about',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
@@ -25,8 +26,13 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'Login',
+    name: 'login',
     component: Login
+  },
+  {
+    path: '/chats',
+    name: 'chats',
+    component: Chats
   }
 ]
 
@@ -43,7 +49,7 @@ router.beforeEach((to, from, next) => {
         console.log(user)
         next()
       } else {
-        next({name: 'Login'})
+        next({name: 'login'})
       }
     })
   } else {

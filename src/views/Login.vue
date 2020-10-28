@@ -13,29 +13,34 @@
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
 
 <script>
+import firebase from "firebase/app";
+import { db } from "@/configFirebase.js";
 
-import firebase from 'firebase/app'
-import {db} from '@/configFirebase.js'
-
-export default {  
-  name: "googleIcon",
-  data(){
-    return{
-
-    }
-
+export default {
+  name: "login",
+  data() {
+    return {};
   },
   methods: {
-    googleLogin(){
+    googleLogin() {
       const provider = new firebase.auth.GoogleAuthProvider();
 
-      firebase.auth().signInWithRedirect(provider)
-    }
-  }
+      firebase.auth().signInWithRedirect(provider);
+    },
+  },
+  created() {
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then(() => {
+        this.$router.push({ name: "home" });
+      })
+      .catch((err) => {
+        console.log("Errarta: ", err);
+      });
+  },
 };
 </script>
