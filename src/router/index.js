@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Chats from '../views/Chats.vue'
+import Groups from '../views/Groups.vue'
 import firebase from 'firebase/app'
 
 Vue.use(VueRouter)
@@ -33,6 +34,11 @@ const routes = [
     path: '/chats',
     name: 'chats',
     component: Chats
+  },
+  {
+    path: '/groups',
+    name: 'groups',
+    component: Groups
   }
 ]
 

@@ -11,5 +11,8 @@ export default new Vuetify({
                 component: googleIcon
             }
         }
+    },
+    theme: {
+        dark: true,
     }
 });

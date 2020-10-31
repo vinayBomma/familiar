@@ -18,13 +18,13 @@
         @update:bounds="boundsUpdated"
       >
         <l-tile-layer :url="url"></l-tile-layer>
-        <l-marker :lat-lng="markerLatLng">
-          <l-icon :icon-size="iconSize" :icon-url="iconUrl" />
-          <!-- <l-popup>
-          <h3>Amyra is in Mumbai</h3>
-          <p>She is in a Park</p>
-        </l-popup> -->
-        </l-marker>
+          <l-marker :lat-lng="markerLatLng">
+            <l-icon :icon-size="iconSize" :icon-url="iconUrl" />
+            <l-popup>
+              <h3>Amyra is in Mumbai</h3>
+              <p>She is in a Park</p>
+            </l-popup>
+          </l-marker>
       </l-map>
     </div>
     <!-- </v-layout> -->
@@ -51,11 +51,11 @@ export default {
   data() {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      zoom: 18,
+      zoom: 8,
       center: [19.01109, 72.82831],
       bounds: null,
       markerLatLng: [19.01109, 72.82831],
-      iconSize: [50, 50],
+      iconSize: [40, 40],
       iconUrl: "men.svg",
       // defIcon: L.icon({
       //   iconUrl: 'men.svg',
@@ -88,7 +88,13 @@ export default {
   created() {
     let user = firebase.auth().currentUser;
     this.iconUrl = user.photoURL;
-    // console.log(this.defIcon)
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getPosition);
+      }
+      function getPosition(position) {
+        console.log(position.coords.latitude, position.coords.longitude);
+      }
   },
 };
 </script>
