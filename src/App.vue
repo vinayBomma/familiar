@@ -17,6 +17,11 @@
   </v-app>
 </template>
 
+<style>
+.v-navigation-drawer {
+    z-index: 1001;
+}
+</style>
 
 <script>
 // import HelloWorld from './components/HelloWorld';

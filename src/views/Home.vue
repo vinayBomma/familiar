@@ -1,23 +1,17 @@
 <template>
   <v-container>
-    <!-- <div> -->
-    <!-- <v-layout row> -->
-    <div style="height: 750px">
-      <!-- <div class="info">
-      <span>Center: {{ center }}</span>
-      <span>Zoom: {{ zoom }}</span>
-      <span>Bounds: {{ bounds }}</span>
-    </div> -->
-      <!-- <span @click="signOut">Signout</span> -->
-      <l-map
-        style="height: 80%; width: 80%"
-        :zoom="zoom"
-        :center="center"
-        @update:zoom="zoomUpdated"
-        @update:center="centerUpdated"
-        @update:bounds="boundsUpdated"
-      >
-        <l-tile-layer :url="url"></l-tile-layer>
+    <v-layout row>
+      <v-row align="start" justify="center" style="height: 750px">
+        <!-- <span @click="signOut">Signout</span> -->
+        <l-map
+          style="height: 50%; width: 70%"
+          :zoom="zoom"
+          :center="center"
+          @update:zoom="zoomUpdated"
+          @update:center="centerUpdated"
+          @update:bounds="boundsUpdated"
+        >
+          <l-tile-layer :url="url"></l-tile-layer>
           <l-marker :lat-lng="markerLatLng">
             <l-icon :icon-size="iconSize" :icon-url="iconUrl" />
             <l-popup>
@@ -25,23 +19,20 @@
               <p>She is in a Park</p>
             </l-popup>
           </l-marker>
-      </l-map>
-    </div>
-    <!-- </v-layout> -->
-    <!-- </div> -->
+        </l-map>
+      </v-row>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
-// @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "vue2-leaflet";
-import firebase from "firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
 
 export default {
-  name: "home",
+  name: "Home",
   components: {
-    // HelloWorld,
     LMap,
     LTileLayer,
     LMarker,
@@ -57,10 +48,6 @@ export default {
       markerLatLng: [19.01109, 72.82831],
       iconSize: [40, 40],
       iconUrl: "men.svg",
-      // defIcon: L.icon({
-      //   iconUrl: 'men.svg',
-      //   iconSize: [50, 50],
-      // })
     };
   },
   methods: {
@@ -90,11 +77,11 @@ export default {
     this.iconUrl = user.photoURL;
 
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(getPosition);
-      }
-      function getPosition(position) {
-        console.log(position.coords.latitude, position.coords.longitude);
-      }
+      navigator.geolocation.getCurrentPosition(getPosition);
+    }
+    function getPosition(position) {
+      console.log(position.coords.latitude, position.coords.longitude);
+    }
   },
 };
 </script>

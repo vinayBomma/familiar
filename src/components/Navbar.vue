@@ -1,14 +1,13 @@
 <template>
   <nav>
     <v-app-bar flat app>
-      <!-- <v-toolbar-side-icon @click="drawer = !drawer" aria-label="Menu"></v-toolbar-side-icon> -->
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app>
       <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="80">
-            <img src="men.svg" alt="Profile Photo" />
+            <img :src="profilePhoto" alt="Profile Photo" />
           </v-avatar>
         </v-flex>
       </v-layout>
@@ -30,7 +29,7 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item>
+        <v-list-item class="mt-2">
           <v-btn rounded block @click="enableLoc">
             <v-icon left>mdi-google-maps</v-icon>
             Enable Location</v-btn
@@ -48,7 +47,14 @@
 
       <template v-slot:append>
         <v-row class="pa-2">
-          <v-col sm="4" v-for="(icon, i) in osIcon" :key="i" class="text-center">
+          <v-col
+            sm="3"
+            md="3"
+
+            v-for="(icon, i) in osIcon"
+            :key="i"
+            class="text-center"
+          >
             <v-icon :color="icon.color">{{ icon.ic }}</v-icon>
           </v-col>
         </v-row>
@@ -58,6 +64,9 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
+import "firebase/auth";
+
 export default {
   name: "Navbar",
   data() {
@@ -71,11 +80,12 @@ export default {
         { icon: "mdi-account-group", text: "Groups", route: "groups" },
       ],
       osIcon: [
-        { id: '3', ic: "mdi-microsoft-windows" , color: "#0288D1"},
-        { id: '1', ic: "mdi-android" , color: "#4CAF50"},
-        { id: '2', ic: "mdi-apple-ios" , color: "#BDBDBD  "},
-        { id: '4', ic: "mdi-web" , color: "#01579B"},
+        { id: "3", ic: "mdi-microsoft-windows", color: "#0288D1" },
+        { id: "1", ic: "mdi-android", color: "#4CAF50" },
+        { id: "2", ic: "mdi-apple-ios", color: "#BDBDBD  " },
+        { id: "4", ic: "mdi-web", color: "#01579B" },
       ],
+      profilePhoto: null,
     };
   },
   methods: {
@@ -87,6 +97,13 @@ export default {
         console.log(position.coords.latitude, position.coords.longitude);
       }
     },
+  },
+  created() {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.profilePhoto = user.photoURL;
+      }
+    });
   },
 };
 </script>
