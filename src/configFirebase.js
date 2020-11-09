@@ -11,6 +11,33 @@ const firebaseConfig = {
   appId: "1:120451297244:web:ddc2e304adfc425c812919",
 };
 
+// firebase.auth().onAuthStateChanged(user => {
+//   if (user) {
+//       let Useruid = user.uid
+//       firebase.firestore().enablePersistence()
+//           .catch(function (err) {
+//               if (err.code == 'failed-precondition') {
+//                   // Multiple tabs open, persistence can only be enabled
+//                   // in one tab at a a time.
+//                   // ...
+//               } else if (err.code == 'unimplemented') {
+//                   // The current browser does not support all of the
+//                   // features required to enable persistence
+//                   // ...
+//               }
+//           });
+
+//       db.collection('attData').where("uid", "==", Useruid)
+//           .onSnapshot((snapshot) => {
+//               snapshot.docChanges().forEach(change => {
+//                   if(change === 'added'){
+//                       //data added
+//                   }
+//               })
+//           })  
+//   }
+// })
+
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export const db = firebaseApp.firestore();

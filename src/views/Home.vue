@@ -29,6 +29,7 @@
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "vue2-leaflet";
 import firebase from "firebase/app";
 import "firebase/auth";
+import { db } from "../configFirebase";
 
 export default {
   name: "Home",
@@ -43,9 +44,9 @@ export default {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       zoom: 8,
-      center: [19.01109, 72.82831],
+      center: [18.123,74.213],
       bounds: null,
-      markerLatLng: [19.01109, 72.82831],
+      markerLatLng: [18.123,74.213],
       iconSize: [40, 40],
       iconUrl: "men.svg",
     };
@@ -77,11 +78,20 @@ export default {
     this.iconUrl = user.photoURL;
 
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(getPosition);
+      navigator.geolocation.getCurrentPosition((position) => {
+        let pos = [position.coords.latitude, position.coords.longitude];
+        this.markerLatLng = pos;
+        this.center = this.markerLatLng;
+      });
     }
-    function getPosition(position) {
-      console.log(position.coords.latitude, position.coords.longitude);
-    }
+
+    // db.collection("groups").doc('test').collection('chats').doc().set({
+    //   name: 'chat is working hopefully'
+    // })
+
+    // db.collection("groups").doc().set({
+    //   msg: 'new group hopefully'
+    // })
   },
 };
 </script>
