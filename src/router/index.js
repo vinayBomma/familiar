@@ -33,12 +33,18 @@ const routes = [
   {
     path: '/chats',
     name: 'chats',
-    component: Chats
+    component: Chats,
+    meta: {
+      requiresAuth: true,
+    }
   },
   {
     path: '/groups',
     name: 'groups',
-    component: Groups
+    component: Groups,
+    meta: {
+      requiresAuth: true
+    }
   }
 ]
 
@@ -52,7 +58,6 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(rec => rec.meta.requiresAuth)) {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        console.log(user)
         next()
       } else {
         next({name: 'login'})

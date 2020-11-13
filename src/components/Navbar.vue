@@ -7,7 +7,7 @@
       <v-layout column align-center>
         <v-flex class="mt-5">
           <v-avatar size="80">
-            <img :src="profilePhoto" alt="Profile Photo" />
+            <img :src="$store.state.user.photoURL" alt="Profile Photo" />
           </v-avatar>
         </v-flex>
       </v-layout>
@@ -50,7 +50,6 @@
           <v-col
             sm="3"
             md="3"
-
             v-for="(icon, i) in osIcon"
             :key="i"
             class="text-center"
@@ -69,6 +68,11 @@ import "firebase/auth";
 
 export default {
   name: "Navbar",
+  // computed: {
+  //   profilePhoto(){
+  //     return this.$store.getters.user.photoUrl
+  //   }
+  // },
   data() {
     return {
       drawer: false,
@@ -85,7 +89,7 @@ export default {
         { id: "2", ic: "mdi-apple-ios", color: "#BDBDBD  " },
         { id: "4", ic: "mdi-web", color: "#01579B" },
       ],
-      profilePhoto: null,
+      photoURL: null,
     };
   },
   methods: {
@@ -99,11 +103,16 @@ export default {
     },
   },
   created() {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.profilePhoto = user.photoURL;
-      }
-    });
+    // let user = firebase.auth().currentUser;
+    // console.log(user);
+    // // if(user){
+    // this.$store.commit("userData", user);
+    // }
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user) {
+    //     this.profilePhoto = user.photoURL;
+    //   }
+    // });
   },
 };
 </script>

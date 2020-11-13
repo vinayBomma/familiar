@@ -1,6 +1,11 @@
 <template>
   <div>
-    <v-btn aria-label="Login" class="ma-2 elevation-4" @click="googleLogin">
+    <v-btn
+      aria-label="Login"
+      class="ma-2 elevation-4"
+      @click="googleLogin"
+      :loading="loading"
+    >
       Login with<v-icon right>$vuetify.icons.google</v-icon>
     </v-btn>
     <!-- <v-btn
@@ -22,21 +27,28 @@ import { db } from "@/configFirebase.js";
 export default {
   name: "login",
   data() {
-    return {};
+    return {
+      loading: null,
+    };
   },
   methods: {
     googleLogin() {
       const provider = new firebase.auth.GoogleAuthProvider();
 
       firebase.auth().signInWithRedirect(provider);
+      this.loading = true;
     },
   },
   created() {
     firebase
       .auth()
       .getRedirectResult()
-      .then(() => {
+      .then((result) => {
         this.$router.push({ name: "home" });
+        db.collection('users').doc(result.user.uid).set({
+          displayName: result.user.displayName,
+          photo: result.user.photoURL,
+        }, {merge: true})
       })
       .catch((err) => {
         console.log("Errarta: ", err);

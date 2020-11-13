@@ -13,7 +13,7 @@
         >
           <l-tile-layer :url="url"></l-tile-layer>
           <l-marker :lat-lng="markerLatLng">
-            <l-icon :icon-size="iconSize" :icon-url="iconUrl" />
+            <l-icon :icon-size="iconSize" :icon-url="$store.state.user.photoURL" />
             <l-popup>
               <h3>Amyra is in Mumbai</h3>
               <p>She is in a Park</p>
@@ -28,8 +28,7 @@
 <script>
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "vue2-leaflet";
 import firebase from "firebase/app";
-import "firebase/auth";
-import { db } from "../configFirebase";
+import { db } from "@/configFirebase";
 
 export default {
   name: "Home",
@@ -75,7 +74,8 @@ export default {
   },
   created() {
     let user = firebase.auth().currentUser;
-    this.iconUrl = user.photoURL;
+
+    this.$store.commit('userData', user);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -84,6 +84,11 @@ export default {
         this.center = this.markerLatLng;
       });
     }
+
+    navigator.getBattery().then((battery) => {
+      console.log("battery level: ", Math.floor(battery.level * 100) + "%");
+      console.log("battery charging: ", battery.charging);
+    });
 
     // db.collection("groups").doc('test').collection('chats').doc().set({
     //   name: 'chat is working hopefully'
