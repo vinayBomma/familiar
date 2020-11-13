@@ -13,10 +13,10 @@
         >
           <l-tile-layer :url="url"></l-tile-layer>
           <l-marker :lat-lng="markerLatLng">
-            <l-icon :icon-size="iconSize" :icon-url="$store.state.user.photoURL" />
+            <l-icon :icon-size="iconSize" :icon-url="user.data.photoURL" />
             <l-popup>
-              <h3>Amyra is in Mumbai</h3>
-              <p>She is in a Park</p>
+              <h3>{{user.data.displayName}} is in Mumbai</h3>
+              <p>They are in a Park</p>
             </l-popup>
           </l-marker>
         </l-map>
@@ -38,6 +38,11 @@ export default {
     LMarker,
     LPopup,
     LIcon,
+  },
+  computed: {
+    user(){
+      return this.$store.getters.user
+    }
   },
   data() {
     return {
@@ -73,9 +78,6 @@ export default {
     },
   },
   created() {
-    let user = firebase.auth().currentUser;
-
-    this.$store.commit('userData', user);
 
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {

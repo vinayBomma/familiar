@@ -95,17 +95,13 @@
                 <v-list-item-action>
                   <v-icon color="green darken-2" large>mdi-whatsapp</v-icon>
                 </v-list-item-action>
-                <v-list-item-content
-                  >Share on Whatsapp</v-list-item-content
-                >
+                <v-list-item-content>Share on Whatsapp</v-list-item-content>
               </v-list-item>
               <v-list-item>
                 <v-list-item-action>
                   <v-icon color="cyan" large>mdi-twitter</v-icon>
                 </v-list-item-action>
-                <v-list-item-content
-                  >Share on Twitter</v-list-item-content
-                >
+                <v-list-item-content>Share on Twitter</v-list-item-content>
               </v-list-item>
               <v-list-item>
                 <v-list-item-action>
@@ -122,10 +118,16 @@
 </template>
 
 <script>
-import firebase from 'firebase/app'
-import {db} from '@/configFirebase'
+import firebase from "firebase/app";
+import { db } from "@/configFirebase";
+
 export default {
   name: "Groups",
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+  },
   data() {
     return {
       showDialog: null,
@@ -145,17 +147,16 @@ export default {
   },
   methods: {
     createGroup() {
-      console.log(this.grpName)
-      console.log(this.inviteCode)
-      console.log(this.$store.state.user.uid)
+      console.log(this.grpName);
+      console.log(this.inviteCode);
+      console.log(this.user.data.uid);
       this.showDialog = null;
-
 
       // if(this.grpName && this.inviteCode){
       //   db.collection('groups').doc().set({
       //     name: this.grpName,
       //     inviteCode: this.inviteCode,
-      //     admin: 
+      //     admin:
       //   })
       // }
     },

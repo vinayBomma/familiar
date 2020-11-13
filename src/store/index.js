@@ -5,16 +5,32 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: null,
+    user: {
+      loggedIn: null,
+      data: null,
+    },
   },
   mutations: {
-    userData(state, data){
-      state.user = data
-    }
+    setLoginStatus(state, value) {
+      state.user.loggedIn = value;
+    },
+    setUserData(state, data) {
+      state.user.data = data;
+    },
   },
   getters: {
-    user: state => state.user,
+    user(state) {
+      return state.user;
+    },
   },
-  actions: {},
-  modules: {},
+  actions: {
+    fetchUser({ commit }, user) {
+      commit("setLoginStatus", (user !== null));
+      if (user) {
+        commit("setUserData", user);
+      } else {
+        commit("setUserData", null);
+      }
+    },
+  },
 });

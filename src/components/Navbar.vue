@@ -4,15 +4,15 @@
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app>
-      <v-layout column align-center>
+      <v-layout column align-center v-if="user.loggedIn">
         <v-flex class="mt-5">
           <v-avatar size="80">
-            <img :src="$store.state.user.photoURL" alt="Profile Photo" />
+            <img :src="user.data.photoURL" alt="Profile Photo" />
           </v-avatar>
         </v-flex>
       </v-layout>
 
-      <v-divider class="mt-5"></v-divider>
+      <v-divider v-if="user.loggedIn" class="mt-5"></v-divider>
 
       <v-list>
         <v-list-item
@@ -68,11 +68,11 @@ import "firebase/auth";
 
 export default {
   name: "Navbar",
-  // computed: {
-  //   profilePhoto(){
-  //     return this.$store.getters.user.photoUrl
-  //   }
-  // },
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+  },
   data() {
     return {
       drawer: false,
@@ -89,7 +89,6 @@ export default {
         { id: "2", ic: "mdi-apple-ios", color: "#BDBDBD  " },
         { id: "4", ic: "mdi-web", color: "#01579B" },
       ],
-      photoURL: null,
     };
   },
   methods: {
@@ -101,18 +100,6 @@ export default {
         console.log(position.coords.latitude, position.coords.longitude);
       }
     },
-  },
-  created() {
-    // let user = firebase.auth().currentUser;
-    // console.log(user);
-    // // if(user){
-    // this.$store.commit("userData", user);
-    // }
-    // firebase.auth().onAuthStateChanged((user) => {
-    //   if (user) {
-    //     this.profilePhoto = user.photoURL;
-    //   }
-    // });
   },
 };
 </script>
