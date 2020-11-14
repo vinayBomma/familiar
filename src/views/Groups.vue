@@ -35,7 +35,7 @@
         </v-flex>
 
         <v-btn
-          @click="showDialog = !showDialog"
+          @click="createDialog = !createDialog"
           fixed
           bottom
           right
@@ -45,10 +45,10 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
 
-        <v-dialog v-model="showDialog" fullscreen>
+        <v-dialog v-model="createDialog" fullscreen>
           <v-card>
             <v-toolbar dark color="cyan">
-              <v-btn icon dark @click="showDialog = !showDialog">
+              <v-btn icon dark @click="createDialog = !createDialog">
                 <v-icon>mdi-close</v-icon>
               </v-btn>
               <v-toolbar-title>Create Group</v-toolbar-title>
@@ -112,6 +112,39 @@
             </v-list>
           </v-card>
         </v-dialog>
+
+        <v-dialog light v-model="joinDialog">
+          <v-card>
+            <v-card-title class="justify-center subheading">
+              Join Group
+            </v-card-title>
+            <v-card-text class="mt-2">
+              <v-text-field
+                label="Enter Code"
+                shaped
+                outlined
+                v-model="enterCode"
+              ></v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn text @click="joinDialog = null">Cancel</v-btn>
+              <v-btn color="cyan white--text" right @click="joinGroup"
+                >Join</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <v-snackbar
+          shaped
+          timeout="3000"
+          v-model="snackbar"
+          top
+          right
+          color="yellow darken-2"
+          >{{ msg }}</v-snackbar
+        >
       </v-layout>
     </v-container>
   </div>
@@ -130,9 +163,13 @@ export default {
   },
   data() {
     return {
-      showDialog: null,
+      createDialog: null,
+      joinDialog: true,
       inviteCode: null,
+      enterCode: null,
       grpName: null,
+      snackbar: null,
+      msg: null,
       items: [
         { title: "Map" },
         { title: "Chat" },
@@ -147,18 +184,22 @@ export default {
   },
   methods: {
     createGroup() {
-      console.log(this.grpName);
-      console.log(this.inviteCode);
-      console.log(this.user.data.uid);
-      this.showDialog = null;
-
-      // if(this.grpName && this.inviteCode){
-      //   db.collection('groups').doc().set({
-      //     name: this.grpName,
-      //     inviteCode: this.inviteCode,
-      //     admin:
-      //   })
-      // }
+      if (this.grpName && this.inviteCode) {
+        db.collection("groups")
+          .doc()
+          .set({
+            name: this.grpName,
+            inviteCode: this.inviteCode,
+            admin: this.user.data.uid,
+            members: [this.user.data.uid],
+            totalMembers: 1,
+          })
+          .then(() => {
+            this.createDialog = null;
+            this.msg = "New Group created";
+            this.snackbar = true;
+          });
+      }
     },
     genCode() {
       var result = "";
@@ -175,6 +216,44 @@ export default {
     copyCode() {
       if (this.inviteCode) {
         navigator.clipboard.writeText(this.inviteCode);
+        this.msg = "Invite code copied to clipboard";
+        this.snackbar = true;
+      }
+    },
+    joinGroup() {
+      if (this.enterCode) {
+        console.log("Code entered: ", this.enterCode);
+        db.collection("groups")
+          .where("inviteCode", "==", this.enterCode)
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              this.msg = "Invalid Code";
+              this.snackbar = true;
+            }
+            querySnapshot.forEach((doc) => {
+              let member = doc.data().members;
+              if (member.includes(this.user.data.uid)) {
+                this.msg = "You are already a member of this group";
+                this.snackbar = true;
+              } else {
+                member.push(this.user.data.uid);
+                db.collection("groups")
+                  .doc(doc.id)
+                  .set(
+                    {
+                      members: member,
+                      totalMembers: firebase.firestore.FieldValue.increment(1),
+                    },
+                    { merge: true }
+                  );
+              }
+            });
+          })
+          .catch((err) => {
+            console.log("Error: ", err);
+          });
+        this.joinDialog = null;
       }
     },
   },

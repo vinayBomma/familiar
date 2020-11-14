@@ -47,7 +47,7 @@ export default {
   data() {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      zoom: 8,
+      zoom: 6,
       center: [18.123,74.213],
       bounds: null,
       markerLatLng: [18.123,74.213],
