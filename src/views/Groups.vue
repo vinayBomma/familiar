@@ -185,20 +185,29 @@ export default {
   methods: {
     createGroup() {
       if (this.grpName && this.inviteCode) {
-        db.collection("groups")
-          .doc()
-          .set({
-            name: this.grpName,
-            inviteCode: this.inviteCode,
-            admin: this.user.data.uid,
-            members: [this.user.data.uid],
-            totalMembers: 1,
-          })
-          .then(() => {
-            this.createDialog = null;
-            this.msg = "New Group created";
-            this.snackbar = true;
-          });
+        let batch = db.batch();
+        let groups = db.collection("groups").doc();
+        let users = db.collection("users").doc(this.user.data.uid);
+
+        batch.set(groups, {
+          name: this.grpName,
+          inviteCode: this.inviteCode,
+          admin: this.user.data.uid,
+          members: [this.user.data.uid],
+          totalMembers: 1,
+        });
+
+        batch.update(users, {
+          inGroup: firebase.firestore.FieldValue.arrayUnion(groups.id),
+        });
+
+        console.log(groups.id);
+
+        batch.commit().then(() => {
+          this.createDialog = null;
+          this.msg = "New Group created";
+          this.snackbar = true;
+        });
       }
     },
     genCode() {
@@ -222,6 +231,8 @@ export default {
     },
     joinGroup() {
       if (this.enterCode) {
+        let batch = db.batch();
+
         console.log("Code entered: ", this.enterCode);
         db.collection("groups")
           .where("inviteCode", "==", this.enterCode)
@@ -238,15 +249,32 @@ export default {
                 this.snackbar = true;
               } else {
                 member.push(this.user.data.uid);
-                db.collection("groups")
-                  .doc(doc.id)
-                  .set(
-                    {
-                      members: member,
-                      totalMembers: firebase.firestore.FieldValue.increment(1),
-                    },
-                    { merge: true }
-                  );
+                let groups = db.collection("groups").doc(doc.id);
+                let users = db.collection("users").doc(this.user.data.uid);
+
+                batch.update(groups, {
+                  members: member,
+                  totalMembers: firebase.firestore.FieldValue.increment(1),
+                });
+
+                batch.update(users, {
+                  inGroup: firebase.firestore.FieldValue.arrayUnion(doc.id),
+                });
+
+                batch.commit().then(() => {
+                  this.msg = "Joined the group!";
+                  this.snackbar = true;
+                });
+
+                // db.collection("groups")
+                //   .doc(doc.id)
+                //   .set(
+                //     {
+                //       members: member,
+                //       totalMembers: firebase.firestore.FieldValue.increment(1),
+                //     },
+                //     { merge: true }
+                //   );
               }
             });
           })

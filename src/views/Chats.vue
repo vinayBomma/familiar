@@ -44,7 +44,7 @@
                   You
                   <span class="caption" style="float: right">9:29 pm</span>
                 </div>
-                <div>Reached grandma's place just now</div>
+                <div class="body-2">Reached grandma's place just now</div>
                 <!-- <span class="caption" style="float: right">9:29 pm</span> -->
               </v-card-text>
             </v-card>
@@ -59,23 +59,23 @@
                   Vinay
                   <span class="caption" style="float: right">9:29 pm</span>
                 </div>
-                <div>Okay great. I'll be there in an hour.</div>
+                <div class="body-2">Okay great. I'll be there in an hour.</div>
               </v-card-text>
             </v-card>
           </v-col>
         </v-layout>
 
-        <v-layout>
+        <v-layout v-for="(msg, j) in messages" :key="j">
           <v-col md="6" sm="6" cols="9">
             <v-card class="float-left indigo darken-1">
               <v-card-text>
                 <div class="caption">
-                  Vinay
-                  <span class="caption" style="float: right">9:30 pm</span>
+                  {{ msg.uid }}
+                  <span class="caption" style="float: right">{{
+                    msg.createdAt
+                  }}</span>
                 </div>
-                <div>
-                  If you guys need anything, let me know.
-                </div>
+                <div class="body-2">{{ msg.text }}</div>
               </v-card-text>
             </v-card>
           </v-col>
@@ -95,22 +95,6 @@
           </v-col>
         </v-layout> -->
 
-        <v-layout>
-          <v-col md="6" sm="6" cols="9">
-            <v-card class="float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">
-                  Sarah
-                  <span class="caption" style="float: right">9:35 pm</span>
-                </div>
-                <div>
-                  Won't be coming to the party today, feeling a bit sick.
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
         <!-- <v-layout>
           <v-col md="6" sm="6" offset-md="6" offset-sm="6">
             <v-card class="rounded-l-xl float-right teal darken-2">
@@ -123,142 +107,19 @@
           </v-col>
         </v-layout> -->
 
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">
-                  You
-                  <span class="caption" style="float: right">9:38 pm</span>
-                </div>
-                <div>We will miss you! Take care.</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">
-                  You
-                  <div class="caption float-right">9:45 pm</div>
-                </div>
-                <div>Going out to get some groceries.</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You
-                  <div class="caption float-right">9:54 pm</div>
-                </div>
-                <div>There's a long queue in the supermarket. Might be a bit late.</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" cols="9">
-            <v-card class="float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">
-                  Praneet
-                  <span class="caption" style="float: right">9:55 pm</span>
-                </div>
-                <div>
-                  Okay. Let us know when you reach your home.
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You
-                  <div class="caption float-right">9:56 pm</div>
-                </div>
-                <div></div>
-                Yeah of course!
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You
-                  <div class="caption float-right">11:05 pm</div>
-                </div>
-                <div></div>
-                Sorry for not updating you guys. Met an old friend and we got
-                talking.
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You
-                  <div class="caption float-right">11:05 pm</div>
-                </div>
-                <div></div>
-                The last message doesn't show up.
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" cols="9">
-            <v-card class="float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">
-                  Praneet
-                  <span class="caption" style="float: right">9:55 pm</span>
-                </div>
-                <div>
-                  Okay. Let us know when you reach your home.
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You
-                  <div class="caption float-right">11:05 pm</div>
-                </div>
-                <div></div>
-                Just somthing i wanted to say
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
         <!-- ======================================= -->
-        <v-footer fixed padless>
+        <v-footer fixed padless class="my-n6">
           <v-layout>
             <v-col>
-              <v-text-field filled rounded placeholder="Type a message">
+              <v-text-field
+                filled
+                rounded
+                placeholder="Type a message"
+                v-model="msg"
+                required
+              >
                 <template v-slot:append-outer>
-                  <v-icon>mdi-send</v-icon>
+                  <v-icon @click="sendMessage">mdi-send</v-icon>
                 </template>
               </v-text-field>
             </v-col>
@@ -270,16 +131,48 @@
 </template>
 
 <script>
+import firebase from "firebase/app";
+
 export default {
   name: "Chats",
   data() {
     return {
       chatWindow: null,
+      msg: null,
       groups: [
         { id: 1, name: "Bomma Family", totalMembers: 5 },
         { id: 2, name: "School Group Da Silva", totalMembers: 7 },
       ],
+      messages: [
+        {
+          text: "hello three",
+          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
+          createdAt: "15:03",
+        },
+        {
+          text: "something more",
+          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
+          createdAt: "16:03",
+        },
+        {
+          text: "lunch today?",
+          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
+          createdAt: "12:13",
+        },
+      ],
     };
+  },
+  methods: {
+    sendMessage() {
+      if(this.msg){
+        // db.collection('groups').
+      }
+      console.log(this.msg);
+      var myTimestamp = firebase.firestore.Timestamp.fromDate(
+        new Date()
+      ).toDate();
+      console.log(this.$store.getters.user.data.uid);
+    },
   },
 };
 </script>
