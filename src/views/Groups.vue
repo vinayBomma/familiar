@@ -29,7 +29,7 @@
             <v-card-text
               class="subtitle-2"
               style="letter-spacing: 2px; text-align:left;"
-              >{{ group.totalMembers }} members</v-card-text
+              >{{ group.members }} members</v-card-text
             >
           </v-card>
         </v-flex>
@@ -176,10 +176,7 @@ export default {
         { title: "Settings" },
         { title: "Share" },
       ],
-      groups: [
-        { id: 1, name: "Bomma Family", totalMembers: 5 },
-        { id: 2, name: "School Group Da Silva", totalMembers: 7 },
-      ],
+      groups: [],
     };
   },
   methods: {
@@ -207,6 +204,7 @@ export default {
           this.createDialog = null;
           this.msg = "New Group created";
           this.snackbar = true;
+          this.$router.go({name: "groups"})
         });
       }
     },
@@ -264,17 +262,8 @@ export default {
                 batch.commit().then(() => {
                   this.msg = "Joined the group!";
                   this.snackbar = true;
+                  this.$router.go({name: "groups"})
                 });
-
-                // db.collection("groups")
-                //   .doc(doc.id)
-                //   .set(
-                //     {
-                //       members: member,
-                //       totalMembers: firebase.firestore.FieldValue.increment(1),
-                //     },
-                //     { merge: true }
-                //   );
               }
             });
           })
@@ -284,6 +273,19 @@ export default {
         this.joinDialog = null;
       }
     },
+  },
+  created() {
+    db.collection("groups")
+      .where("members", "array-contains", this.user.data.uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let groupData = {};
+          groupData.name = doc.data().name;
+          groupData.members = doc.data().totalMembers;
+          this.groups.push(groupData)
+        });
+      });
   },
 };
 </script>

@@ -12,14 +12,13 @@
             <v-card-title
               >{{ group.name }}
               <v-layout class="justify-end center">
-                <!-- <v-btn text>Open</v-btn> -->
-                <v-icon @click="chatWindow = true">mdi-open-in-new</v-icon>
+                <v-icon @click="openWindow(group)">mdi-open-in-new</v-icon>
               </v-layout>
             </v-card-title>
             <v-card-text
               class="subtitle-2"
               style="letter-spacing: 2px; text-align:left;"
-              >{{ group.totalMembers }} members</v-card-text
+              >{{ group.members }} members</v-card-text
             >
           </v-card>
         </v-flex>
@@ -28,86 +27,115 @@
 
     <v-dialog v-model="chatWindow" fullscreen>
       <v-card>
-        <v-toolbar dark color="cyan">
-          <v-btn icon dark @click="chatWindow = null">
+        <v-app-bar fixed>
+          <v-btn icon dark @click="closeWindow">
             <v-icon>mdi-keyboard-backspace</v-icon>
           </v-btn>
-          <v-toolbar-title>School Group</v-toolbar-title>
-        </v-toolbar>
-        <!-- ===================================== -->
-        <!-- <v-container fluid> -->
-        <v-layout>
+          <v-toolbar-title>{{ groupName }}</v-toolbar-title>
+        </v-app-bar>
+
+        <!-- ======================  Messed up code ahead -->
+
+        <v-layout v-for="(msg, j) in messages" :key="j">
+          <template v-if="msg.authorUID == user.data.uid">
+            <template v-if="j == messages.length - 1">
+              <v-col
+                md="6"
+                sm="6"
+                offset-md="6"
+                offset-sm="6"
+                style="height: 170px"
+              >
+                <v-card class="float-right teal darken-2">
+                  <v-card-text>
+                    <div class="caption">
+                      You
+                      <span class="caption" style="float: right">{{
+                        msg.createdAt.toDate().getHours() +
+                          ":" +
+                          msg.createdAt.toDate().getMinutes()
+                      }}</span>
+                    </div>
+                    <div class="body-2">{{ msg.message }}</div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </template>
+            <template v-else>
+              <v-col md="6" sm="6" offset-md="6" offset-sm="6">
+                <v-card class="float-right teal darken-2">
+                  <v-card-text>
+                    <div class="caption">
+                      You
+                      <span class="caption" style="float: right">{{
+                        msg.createdAt.toDate().getHours() +
+                          ":" +
+                          msg.createdAt.toDate().getMinutes()
+                      }}</span>
+                    </div>
+                    <div class="body-2">{{ msg.message }}</div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </template>
+          </template>
+
+          <!-- ============================ Part 2  -->
+
+          <template v-else>
+            <template v-if="j == messages.length - 1">
+              <v-col md="6" sm="6" cols="9" style="height: 170px">
+                <v-card class="float-left indigo darken-1">
+                  <v-card-text>
+                    <div class="caption">
+                      {{ msg.author }}
+                      <span class="caption" style="float: right">{{
+                        msg.createdAt.toDate().getHours() +
+                          ":" +
+                          msg.createdAt.toDate().getMinutes()
+                      }}</span>
+                    </div>
+                    <div class="body-2">{{ msg.message }}</div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </template>
+            <template v-else>
+              <v-col md="6" sm="6" cols="9">
+                <v-card class="float-left indigo darken-1">
+                  <v-card-text>
+                    <div class="caption">
+                      {{ msg.author }}
+                      <span class="caption" style="float: right">{{
+                        msg.createdAt.toDate().getHours() +
+                          ":" +
+                          msg.createdAt.toDate().getMinutes()
+                      }}</span>
+                    </div>
+                    <div class="body-2">{{ msg.message }}</div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </template>
+          </template>
+        </v-layout>
+
+        <v-layout v-if="devMsg">
           <v-col md="6" sm="6" offset-md="6" offset-sm="6">
             <v-card class="float-right teal darken-2">
               <v-card-text>
                 <div class="caption">
-                  You
-                  <span class="caption" style="float: right">9:29 pm</span>
+                  Developer
+                  <span class="caption" style="float: right">12:00</span>
                 </div>
-                <div class="body-2">Reached grandma's place just now</div>
-                <!-- <span class="caption" style="float: right">9:29 pm</span> -->
+                <div class="body-2">
+                  Seems you have discovered the chat feature!
+                </div>
               </v-card-text>
             </v-card>
           </v-col>
         </v-layout>
 
-        <v-layout>
-          <v-col md="6" sm="6" cols="9">
-            <v-card class="float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">
-                  Vinay
-                  <span class="caption" style="float: right">9:29 pm</span>
-                </div>
-                <div class="body-2">Okay great. I'll be there in an hour.</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <v-layout v-for="(msg, j) in messages" :key="j">
-          <v-col md="6" sm="6" cols="9">
-            <v-card class="float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">
-                  {{ msg.uid }}
-                  <span class="caption" style="float: right">{{
-                    msg.createdAt
-                  }}</span>
-                </div>
-                <div class="body-2">{{ msg.text }}</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout>
-
-        <!-- <v-layout>
-          <v-col md="6" sm="6">
-            <v-card class="rounded-r-xl float-left indigo darken-1">
-              <v-card-text>
-                <div class="caption">Sarah</div>
-                <div>
-                  Won't be coming to the party today, feeling a bit sick
-                </div>
-                <div class="caption text-right">9:35 pm</div></v-card-text
-              >
-            </v-card>
-          </v-col>
-        </v-layout> -->
-
-        <!-- <v-layout>
-          <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-            <v-card class="rounded-l-xl float-right teal darken-2">
-              <v-card-text>
-                <div class="caption">You</div>
-                <div>We will miss you! Take care.</div>
-                <div class="caption text-right">9:36 pm</div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-layout> -->
-
-        <!-- ======================================= -->
         <v-footer fixed padless class="my-n6">
           <v-layout>
             <v-col>
@@ -117,6 +145,7 @@
                 placeholder="Type a message"
                 v-model="msg"
                 required
+                v-on:keyup.enter="sendMessage"
               >
                 <template v-slot:append-outer>
                   <v-icon @click="sendMessage">mdi-send</v-icon>
@@ -132,47 +161,102 @@
 
 <script>
 import firebase from "firebase/app";
+import { db } from "@/configFirebase";
 
 export default {
   name: "Chats",
+  computed: {
+    user() {
+      return this.$store.getters.user;
+    },
+  },
   data() {
     return {
       chatWindow: null,
+      groupID: null,
+      isSender: null,
       msg: null,
-      groups: [
-        { id: 1, name: "Bomma Family", totalMembers: 5 },
-        { id: 2, name: "School Group Da Silva", totalMembers: 7 },
-      ],
-      messages: [
-        {
-          text: "hello three",
-          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
-          createdAt: "15:03",
-        },
-        {
-          text: "something more",
-          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
-          createdAt: "16:03",
-        },
-        {
-          text: "lunch today?",
-          uid: "4N9qwQJyBCcTu0DT1hsGSigBLDw2",
-          createdAt: "12:13",
-        },
-      ],
+      groupName: null,
+      groups: [],
+      messages: [],
+      devMsg: null,
     };
   },
   methods: {
+    openWindow(i) {
+      this.groupName = i.name;
+      this.groupID = i.id;
+      this.fetchMessage();
+      this.chatWindow = true;
+      // this.scrollMessage();
+    },
+    fetchMessage() {
+      db.collection("groups")
+        .doc(this.groupID)
+        .collection("chats")
+        .orderBy("createdAt")
+        .onSnapshot((querySnapshot) => {
+          if (this.messages.length >= 6) {
+            console.log(this.messages.length);
+            this.devMsg = true;
+          }
+          this.messages = [];
+          // this.scrollMessage();
+          querySnapshot.forEach((doc) => {
+            this.messages.push(doc.data());
+          });
+        });
+    },
+    closeWindow() {
+      this.messages = [];
+      this.chatWindow = null;
+    },
+    // scrollMessage() {
+    //   // let box = this.$el.querySelector(".scroll");
+    //   let box = document.querySelector(".scroll");
+    //   box.scrollTop = box.scrollHeight;
+    // },
     sendMessage() {
-      if(this.msg){
-        // db.collection('groups').
+      if (this.msg) {
+        db.collection("groups")
+          .doc(this.groupID)
+          .collection("chats")
+          .doc()
+          .set({
+            message: this.msg,
+            author: this.user.data.displayName,
+            authorUID: this.user.data.uid,
+            createdAt: new Date(),
+          })
+          .then(() => {
+            this.msg = null;
+            // this.scrollMessage();
+          });
       }
-      console.log(this.msg);
-      var myTimestamp = firebase.firestore.Timestamp.fromDate(
-        new Date()
-      ).toDate();
-      console.log(this.$store.getters.user.data.uid);
     },
   },
+  created() {
+    db.collection("groups")
+      .where("members", "array-contains", this.user.data.uid)
+      .get()
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          let groupData = {};
+          groupData.id = doc.id;
+          groupData.name = doc.data().name;
+          groupData.members = doc.data().totalMembers;
+          this.groups.push(groupData);
+        });
+      });
+
+    // window.addEventListener("beforeunload", (event) => {
+    //   this.messages = [];
+    //   this.chatWindow = null;
+    // });
+  },
+  // beforeDestroy() {
+  //   this.messages = [];
+  //   this.chatWindow = null;
+  // },
 };
 </script>
