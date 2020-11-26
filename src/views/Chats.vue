@@ -58,14 +58,20 @@
                 offset-sm="6"
                 style="height: 170px"
               >
-                <v-card class="float-right teal darken-2" min-width="120">
+                <v-card class="float-right teal darken-2" min-width="150">
                   <v-card-text>
                     <div class="caption">
                       You
                       <span class="caption" style="float: right">{{
-                        msg.createdAt.toDate().getHours() +
-                          ":" +
-                          msg.createdAt.toDate().getMinutes()
+                        msg.createdAt
+                          .toDate()
+                          .toLocaleTimeString()
+                          .slice(0, -6) +
+                          " " +
+                          msg.createdAt
+                            .toDate()
+                            .toLocaleTimeString()
+                            .slice(-2)
                       }}</span>
                     </div>
                     <div class="body-2">{{ msg.message }}</div>
@@ -75,15 +81,23 @@
             </template>
             <template v-else>
               <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-                <v-card class="float-right teal darken-2" min-width="120">
+                <v-card class="float-right teal darken-2" min-width="150">
                   <v-card-text>
                     <div class="caption">
                       You
-                      <span class="caption" style="float: right">{{
-                        msg.createdAt.toDate().getHours() +
-                          ":" +
-                          msg.createdAt.toDate().getMinutes()
-                      }}</span>
+                      <span class="caption" style="float: right">
+                        {{
+                          msg.createdAt
+                            .toDate()
+                            .toLocaleTimeString()
+                            .slice(0, -6) +
+                            " " +
+                            msg.createdAt
+                              .toDate()
+                              .toLocaleTimeString()
+                              .slice(-2)
+                        }}
+                      </span>
                     </div>
                     <div class="body-2">{{ msg.message }}</div>
                   </v-card-text>
@@ -102,9 +116,15 @@
                     <div class="caption">
                       {{ msg.author }}
                       <span class="caption" style="float: right">{{
-                        msg.createdAt.toDate().getHours() +
-                          ":" +
-                          msg.createdAt.toDate().getMinutes()
+                        msg.createdAt
+                          .toDate()
+                          .toLocaleTimeString()
+                          .slice(0, -6) +
+                          " " +
+                          msg.createdAt
+                            .toDate()
+                            .toLocaleTimeString()
+                            .slice(-2)
                       }}</span>
                     </div>
                     <div class="body-2">{{ msg.message }}</div>
@@ -119,9 +139,15 @@
                     <div class="caption">
                       {{ msg.author }}
                       <span class="caption" style="float: right">{{
-                        msg.createdAt.toDate().getHours() +
-                          ":" +
-                          msg.createdAt.toDate().getMinutes()
+                        msg.createdAt
+                          .toDate()
+                          .toLocaleTimeString()
+                          .slice(0, -6) +
+                          " " +
+                          msg.createdAt
+                            .toDate()
+                            .toLocaleTimeString()
+                            .slice(-2)
                       }}</span>
                     </div>
                     <div class="body-2">{{ msg.message }}</div>

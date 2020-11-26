@@ -3,26 +3,45 @@
     <v-app-bar flat app>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-toolbar-title v-if="$route.name === 'home'">Home</v-toolbar-title>
-      <v-toolbar-title v-else-if="$route.name === 'about'">About</v-toolbar-title>
-      <v-toolbar-title v-else-if="$route.name === 'chats'">Chats</v-toolbar-title>
-      <v-toolbar-title v-else-if="$route.name === 'groups'">Groups</v-toolbar-title>
-      <v-toolbar-title v-else-if="$route.name === 'login'">Login</v-toolbar-title>
+      <v-toolbar-title v-else-if="$route.name === 'about'"
+        >About</v-toolbar-title
+      >
+      <v-toolbar-title v-else-if="$route.name === 'chats'"
+        >Chats</v-toolbar-title
+      >
+      <v-toolbar-title v-else-if="$route.name === 'groups'"
+        >Groups</v-toolbar-title
+      >
+      <v-toolbar-title v-else-if="$route.name === 'login'"
+        >Login</v-toolbar-title
+      >
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app>
-
-      <v-dialog v-model="signOutModal">
+      <v-dialog max-width="600" v-model="signOutModal">
         <template v-slot:activator="{ on }">
-          <v-layout align-start justify-end row class="pa-3">
-            <v-icon v-if="user.loggedIn" @click="signOutModal = true" v-on="on">mdi-exit-to-app</v-icon>
+          <v-layout justify-end row class="ma-3">
+            <v-icon v-if="user.loggedIn" @click="signOutModal = true" v-on="on"
+              >mdi-exit-to-app</v-icon
+            >
           </v-layout>
         </template>
         <v-card>
-          <v-card-title class="subheading justify-center" style="letter-spacing: 2px; background-image: radial-gradient( circle farthest-corner at -0.2% 99.7%,  rgba(190,53,145,1) 0%, rgba(239,69,115,1) 100.2% );">Sign Out</v-card-title>
-          <v-card-text class="subheading" style="text-align: center; word-spacing: 2px; letter-spacing: 2px">Are you sure you want to sign out?</v-card-text>
+          <v-card-title
+            class="subheading justify-center"
+            style="letter-spacing: 2px; background-image: radial-gradient( circle farthest-corner at -0.2% 99.7%,  rgba(190,53,145,1) 0%, rgba(239,69,115,1) 100.2% );"
+            >Sign Out</v-card-title
+          >
+          <v-card-text
+            class="subheading"
+            style="text-align: center; word-spacing: 2px; letter-spacing: 2px"
+            >Are you sure you want to sign out?</v-card-text
+          >
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn aria-label="No" flat color="blue" @click="signOutModal = false">Cancel</v-btn>
-            <v-btn aria-label="Yes" flat color="blue" @click="signOut">Yes</v-btn>
+            <v-btn aria-label="No" text @click="signOutModal = false"
+              >Cancel</v-btn
+            >
+            <v-btn aria-label="Yes" color="cyan" @click="signOut">Yes</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
