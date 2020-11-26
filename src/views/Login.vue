@@ -48,7 +48,8 @@ export default {
         db.collection('users').doc(result.user.uid).set({
           displayName: result.user.displayName,
           photo: result.user.photoURL,
-          inGroup: [],
+          location: [],
+          email: result.user.email
         }, {merge: true})
       })
       .catch((err) => {

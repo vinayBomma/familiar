@@ -36,6 +36,18 @@
 
         <!-- ======================  Messed up code ahead -->
 
+        <v-layout>
+          <v-col md="6" sm="6" offset-md="3" offset-sm="3" class="mt-5">
+            <v-card class="grey darken-2 mt-8 rounded-lg">
+              <v-card-text>
+                <div class="body-2 text-center">
+                  This is the beginning of your chat history
+                </div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-layout>
+
         <v-layout v-for="(msg, j) in messages" :key="j">
           <template v-if="msg.authorUID == user.data.uid">
             <template v-if="j == messages.length - 1">
@@ -46,7 +58,7 @@
                 offset-sm="6"
                 style="height: 170px"
               >
-                <v-card class="float-right teal darken-2">
+                <v-card class="float-right teal darken-2" min-width="120">
                   <v-card-text>
                     <div class="caption">
                       You
@@ -63,7 +75,7 @@
             </template>
             <template v-else>
               <v-col md="6" sm="6" offset-md="6" offset-sm="6">
-                <v-card class="float-right teal darken-2">
+                <v-card class="float-right teal darken-2" min-width="120">
                   <v-card-text>
                     <div class="caption">
                       You
@@ -85,7 +97,7 @@
           <template v-else>
             <template v-if="j == messages.length - 1">
               <v-col md="6" sm="6" cols="9" style="height: 170px">
-                <v-card class="float-left indigo darken-1">
+                <v-card class="float-left indigo darken-1" min-width="200">
                   <v-card-text>
                     <div class="caption">
                       {{ msg.author }}
@@ -102,7 +114,7 @@
             </template>
             <template v-else>
               <v-col md="6" sm="6" cols="9">
-                <v-card class="float-left indigo darken-1">
+                <v-card class="float-left indigo darken-1" min-width="200">
                   <v-card-text>
                     <div class="caption">
                       {{ msg.author }}
@@ -197,7 +209,6 @@ export default {
         .orderBy("createdAt")
         .onSnapshot((querySnapshot) => {
           if (this.messages.length >= 6) {
-            console.log(this.messages.length);
             this.devMsg = true;
           }
           this.messages = [];

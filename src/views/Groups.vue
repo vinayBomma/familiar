@@ -164,7 +164,7 @@ export default {
   data() {
     return {
       createDialog: null,
-      joinDialog: true,
+      joinDialog: null,
       inviteCode: null,
       enterCode: null,
       grpName: null,
