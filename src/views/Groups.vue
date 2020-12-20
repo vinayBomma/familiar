@@ -113,7 +113,7 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog light v-model="joinDialog">
+        <!-- <v-dialog light v-model="joinDialog">
           <v-card>
             <v-card-title class="justify-center subheading">
               Join Group
@@ -130,11 +130,10 @@
               <v-spacer></v-spacer>
               <v-btn text @click="joinDialog = null">Cancel</v-btn>
               <v-btn color="cyan white--text" right @click="joinGroup"
-                >Join</v-btn
-              >
+                >Join</v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
 
         <v-snackbar
           shaped
@@ -164,7 +163,7 @@ export default {
   data() {
     return {
       createDialog: null,
-      joinDialog: null,
+      // joinDialog: null,
       inviteCode: null,
       enterCode: null,
       grpName: null,

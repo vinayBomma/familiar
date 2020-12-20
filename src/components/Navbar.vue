@@ -15,6 +15,49 @@
       <v-toolbar-title v-else-if="$route.name === 'login'"
         >Login</v-toolbar-title
       >
+
+      <v-spacer></v-spacer>
+      <v-btn
+        v-if="$route.name === 'groups'"
+        text
+        color="cyan"
+        @click="joinDialog = true"
+        >Join Group</v-btn
+      >
+
+      <v-dialog light v-model="joinDialog">
+        <v-card>
+          <v-card-title class="justify-center subheading">
+            Join Group
+          </v-card-title>
+          <v-card-text class="mt-2">
+            <v-text-field
+              label="Enter Code"
+              shaped
+              outlined
+              v-model="enterCode"
+            ></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn text @click="joinDialog = null">Cancel</v-btn>
+            <v-btn color="cyan white--text" right @click="joinGroup"
+              >Join</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-snackbar
+          shaped
+          timeout="3000"
+          v-model="snackbar"
+          top
+          right
+          color="yellow darken-2"
+          >{{ msg }}</v-snackbar
+        >
+
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app>
       <v-dialog max-width="600" v-model="signOutModal">
@@ -32,7 +75,7 @@
             >Sign Out</v-card-title
           >
           <v-card-text
-            class="subheading"
+            class="subheading pt-2"
             style="text-align: center; word-spacing: 2px; letter-spacing: 2px"
             >Are you sure you want to sign out?</v-card-text
           >
@@ -107,6 +150,7 @@
 <script>
 import firebase from "firebase/app";
 import "firebase/auth";
+import { db } from "@/configFirebase";
 
 export default {
   name: "Navbar",
@@ -118,6 +162,10 @@ export default {
   data() {
     return {
       drawer: false,
+      joinDialog: null,
+      enterCode: null,
+      snackbar: null,
+      msg: null,
       signOutModal: null,
       links: [
         { icon: "mdi-home", text: "Home", route: "/" },
@@ -153,6 +201,52 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    joinGroup() {
+      if (this.enterCode) {
+        let batch = db.batch();
+
+        console.log("Code entered: ", this.enterCode);
+        db.collection("groups")
+          .where("inviteCode", "==", this.enterCode)
+          .get()
+          .then((querySnapshot) => {
+            if (querySnapshot.empty) {
+              this.msg = "Invalid Code";
+              this.snackbar = true;
+            }
+            querySnapshot.forEach((doc) => {
+              let member = doc.data().members;
+              if (member.includes(this.user.data.uid)) {
+                this.msg = "You are already a member of this group";
+                this.snackbar = true;
+              } else {
+                member.push(this.user.data.uid);
+                let groups = db.collection("groups").doc(doc.id);
+                let users = db.collection("users").doc(this.user.data.uid);
+
+                batch.update(groups, {
+                  members: member,
+                  totalMembers: firebase.firestore.FieldValue.increment(1),
+                });
+
+                batch.update(users, {
+                  inGroup: firebase.firestore.FieldValue.arrayUnion(doc.id),
+                });
+
+                batch.commit().then(() => {
+                  this.msg = "Joined the group!";
+                  this.snackbar = true;
+                  this.$router.go({ name: "groups" });
+                });
+              }
+            });
+          })
+          .catch((err) => {
+            console.log("Error: ", err);
+          });
+        this.joinDialog = null;
+      }
     },
   },
 };

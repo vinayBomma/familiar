@@ -65,12 +65,12 @@
                       <span class="caption" style="float: right">{{
                         msg.createdAt
                           .toDate()
-                          .toLocaleTimeString()
+                          .toLocaleTimeString("en-US")
                           .slice(0, -6) +
                           " " +
                           msg.createdAt
                             .toDate()
-                            .toLocaleTimeString()
+                            .toLocaleTimeString("en-US")
                             .slice(-2)
                       }}</span>
                     </div>
@@ -89,12 +89,12 @@
                         {{
                           msg.createdAt
                             .toDate()
-                            .toLocaleTimeString()
+                            .toLocaleTimeString("en-US")
                             .slice(0, -6) +
                             " " +
                             msg.createdAt
                               .toDate()
-                              .toLocaleTimeString()
+                              .toLocaleTimeString("en-US")
                               .slice(-2)
                         }}
                       </span>
@@ -118,12 +118,12 @@
                       <span class="caption" style="float: right">{{
                         msg.createdAt
                           .toDate()
-                          .toLocaleTimeString()
+                          .toLocaleTimeString("en-US")
                           .slice(0, -6) +
                           " " +
                           msg.createdAt
                             .toDate()
-                            .toLocaleTimeString()
+                            .toLocaleTimeString("en-US")
                             .slice(-2)
                       }}</span>
                     </div>
@@ -141,12 +141,12 @@
                       <span class="caption" style="float: right">{{
                         msg.createdAt
                           .toDate()
-                          .toLocaleTimeString()
+                          .toLocaleTimeString("en-US")
                           .slice(0, -6) +
                           " " +
                           msg.createdAt
                             .toDate()
-                            .toLocaleTimeString()
+                            .toLocaleTimeString("en-US")
                             .slice(-2)
                       }}</span>
                     </div>
