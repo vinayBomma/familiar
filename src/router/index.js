@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Chats from '../views/Chats.vue'
 import Groups from '../views/Groups.vue'
+import Privacy from '../views/Privacy.vue'
 import firebase from 'firebase/app'
 
 Vue.use(VueRouter)
@@ -45,7 +46,12 @@ const routes = [
     meta: {
       requiresAuth: true
     }
-  }
+  },
+  {
+    path: '/privacypolicy',
+    name: 'privacypolicy',
+    component: Privacy,
+  },
 ]
 
 const router = new VueRouter({

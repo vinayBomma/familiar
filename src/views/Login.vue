@@ -1,12 +1,16 @@
 <template>
   <div>
+    <v-row class="ma-5" justify="center">
+    <img src="../../public/android-chrome-512x512.png" height="100px">
+    </v-row>
     <v-btn
       aria-label="Login"
       class="ma-2 elevation-4"
       @click="googleLogin"
       :loading="loading"
     >
-      Login with<v-icon right>$vuetify.icons.google</v-icon>
+      <v-icon left class="mr-4">$vuetify.icons.google</v-icon>
+      Continue with Google
     </v-btn>
     <!-- <v-btn
       class="elevation-10"

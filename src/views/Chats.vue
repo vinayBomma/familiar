@@ -32,7 +32,34 @@
             <v-icon>mdi-keyboard-backspace</v-icon>
           </v-btn>
           <v-toolbar-title>{{ groupName }}</v-toolbar-title>
+          <!-- <v-spacer></v-spacer>
+          <v-btn text @click="allMembersNav = true">
+            <v-icon>mdi-account-group</v-icon>
+          </v-btn> -->
         </v-app-bar>
+
+        <v-dialog v-model="allMembersNav" light max-width="500">
+          <v-card>
+            <v-list>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-android</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  jack reacher
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-web</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  peter parker
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-dialog>
 
         <!-- ======================  Messed up code ahead -->
 
@@ -158,7 +185,7 @@
           </template>
         </v-layout>
 
-        <v-layout v-if="devMsg">
+        <v-layout v-if="devMsg" class="scroll">
           <v-col md="6" sm="6" offset-md="6" offset-sm="6">
             <v-card class="float-right teal darken-2">
               <v-card-text>
@@ -218,6 +245,7 @@ export default {
       groups: [],
       messages: [],
       devMsg: null,
+      allMembersNav: false,
     };
   },
   methods: {
@@ -249,9 +277,9 @@ export default {
       this.chatWindow = null;
     },
     // scrollMessage() {
-    //   // let box = this.$el.querySelector(".scroll");
-    //   let box = document.querySelector(".scroll");
-    //   box.scrollTop = box.scrollHeight;
+    //   let box = this.$el.querySelector(".scroll");
+    //   box.scrollIntoView();
+    //   // box.scrollTop = box.scrollHeight;
     // },
     sendMessage() {
       if (this.msg) {
@@ -285,15 +313,6 @@ export default {
           this.groups.push(groupData);
         });
       });
-
-    // window.addEventListener("beforeunload", (event) => {
-    //   this.messages = [];
-    //   this.chatWindow = null;
-    // });
   },
-  // beforeDestroy() {
-  //   this.messages = [];
-  //   this.chatWindow = null;
-  // },
 };
 </script>

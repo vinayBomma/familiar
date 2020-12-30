@@ -16,6 +16,10 @@
         >Login</v-toolbar-title
       >
 
+      <v-toolbar-title v-else-if="$route.name === 'privacypolicy'"
+        >Privacy Policy</v-toolbar-title
+      >
+
       <v-spacer></v-spacer>
       <v-btn
         v-if="$route.name === 'groups'"
@@ -25,7 +29,7 @@
         >Join Group</v-btn
       >
 
-      <v-dialog light v-model="joinDialog">
+      <v-dialog light v-model="joinDialog" max-width="600">
         <v-card>
           <v-card-title class="justify-center subheading">
             Join Group
@@ -49,15 +53,14 @@
       </v-dialog>
 
       <v-snackbar
-          shaped
-          timeout="3000"
-          v-model="snackbar"
-          top
-          right
-          color="yellow darken-2"
-          >{{ msg }}</v-snackbar
-        >
-
+        shaped
+        timeout="3000"
+        v-model="snackbar"
+        top
+        right
+        color="yellow darken-2"
+        >{{ msg }}</v-snackbar
+      >
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" app>
       <v-dialog max-width="600" v-model="signOutModal">
@@ -126,7 +129,7 @@
           <v-list-item-content>
             Night Mode
           </v-list-item-content>
-          <v-switch v-model="$vuetify.theme.dark"></v-switch>
+          <v-switch color="cyan" v-model="$vuetify.theme.dark"></v-switch>
         </v-list-item>
       </v-list>
 
@@ -169,7 +172,6 @@ export default {
       signOutModal: null,
       links: [
         { icon: "mdi-home", text: "Home", route: "/" },
-        { icon: "mdi-account-circle", text: "Login", route: "login" },
         { icon: "mdi-information", text: "About", route: "about" },
         { icon: "mdi-chat-processing", text: "Chats", route: "chats" },
         { icon: "mdi-account-group", text: "Groups", route: "groups" },
@@ -249,5 +251,20 @@ export default {
       }
     },
   },
+  // created() {
+  //   if (this.user.loggedIn) {
+  //     this.links = [
+  //       { icon: "mdi-home", text: "Home", route: "/" },
+  //       { icon: "mdi-information", text: "About", route: "about" },
+  //       { icon: "mdi-chat-processing", text: "Chats", route: "chats" },
+  //       { icon: "mdi-account-group", text: "Groups", route: "groups" },
+  //     ];
+  //   } else {
+  //     this.links = [
+  //       { icon: "mdi-account-circle", text: "Login", route: "login" },
+  //       { icon: "mdi-clipboard-text", text: "Privacy Policy", route: "privacypolicy" },
+  //     ];
+  //   }
+  // },
 };
 </script>
