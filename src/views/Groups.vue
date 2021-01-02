@@ -19,9 +19,9 @@
                     >
                   </template>
                   <v-list>
-                    <v-list-item v-for="(item, index) in items" :key="index">
+                    <v-list-item ripple v-for="(item, index) in items" :key="index" @click="itemClick(item.title)">
                       <v-list-item-content>
-                        <v-list-item-title @click="itemClick(item.title)">{{
+                        <v-list-item-title>{{
                           item.title
                         }}</v-list-item-title>
                       </v-list-item-content>
@@ -50,73 +50,82 @@
           <v-icon>mdi-plus</v-icon>
         </v-btn>
 
-        <v-dialog v-model="createDialog" fullscreen>
-          <v-card>
-            <v-toolbar dark color="cyan">
-              <v-btn icon dark @click="createDialog = !createDialog">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-              <v-toolbar-title>Create Group</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-toolbar-items>
-                <v-btn dark text @click="createGroup">
-                  Save
+        <v-bottom-sheet v-model="createDialog" inset>
+          <v-sheet class="text-center" height="370px" dark>
+            <v-card>
+              <v-toolbar dark color="cyan">
+                <v-btn icon dark @click="createDialog = !createDialog">
+                  <v-icon>mdi-close</v-icon>
                 </v-btn>
-              </v-toolbar-items>
-            </v-toolbar>
-            <v-list>
-              <v-subheader>Details</v-subheader>
-              <v-list-item>
-                <!-- <v-row md-4 class="ma-1"> -->
-                <v-text-field
-                  outlined
-                  clearable
-                  shaped
-                  v-model="grpName"
-                  label="Group Name"
-                ></v-text-field>
-              </v-list-item>
-              <v-list-item>
-                <v-text-field
-                  outlined
-                  shaped
-                  readonly
-                  v-model="inviteCode"
-                  label="Invite Code"
-                >
-                  <template v-slot:append-outer>
-                    <v-btn text color="cyan" @click="genCode">Generate</v-btn>
-                  </template>
-                  <template v-slot:append>
-                    <v-icon @click="copyCode">mdi-content-copy</v-icon>
-                  </template>
-                </v-text-field>
-              </v-list-item>
-            </v-list>
-            <v-divider></v-divider>
-            <v-list>
-              <v-subheader>Share</v-subheader>
-              <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="green darken-2" large>mdi-whatsapp</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Whatsapp</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="cyan" large>mdi-twitter</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Twitter</v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="blue darken-4" large>mdi-facebook</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Facebook</v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-dialog>
+                <v-toolbar-title>Create Group</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                  <v-btn dark text @click="createGroup">
+                    Save
+                  </v-btn>
+                </v-toolbar-items>
+              </v-toolbar>
+              <v-list>
+                <v-subheader>Details</v-subheader>
+                <v-list-item>
+                  <v-text-field
+                    outlined
+                    clearable
+                    shaped
+                    v-model="grpName"
+                    label="Group Name"
+                  ></v-text-field>
+                </v-list-item>
+                <v-list-item>
+                  <v-text-field
+                    outlined
+                    shaped
+                    readonly
+                    v-model="inviteCode"
+                    label="Invite Code"
+                  >
+                    <template v-slot:append-outer>
+                      <v-btn text color="cyan" @click="genCode">Generate</v-btn>
+                    </template>
+                    <template v-slot:append>
+                      <v-icon @click="copyCode">mdi-content-copy</v-icon>
+                    </template>
+                  </v-text-field>
+                </v-list-item>
+                <v-divider></v-divider>
+                <v-list-item ripple>
+                  <v-list-item-icon>
+                    <v-icon>mdi-share-variant</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    Share
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+              <!-- <v-list> -->
+              <!-- <v-subheader>Share</v-subheader>
+                <v-list-item>
+                  <v-list-item-action>
+                    <v-icon color="green darken-2" large>mdi-whatsapp</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>Share on Whatsapp</v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-action>
+                    <v-icon color="cyan" large>mdi-twitter</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>Share on Twitter</v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-action>
+                    <v-icon color="blue darken-4" large>mdi-facebook</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>Share on Facebook</v-list-item-content>
+                </v-list-item>
+              </v-list> -->
+            </v-card>
+          </v-sheet>
+        </v-bottom-sheet>
 
         <v-dialog v-model="groupSettings" fullscreen>
           <v-card>
@@ -125,22 +134,22 @@
                 <v-icon>mdi-close</v-icon>
               </v-btn>
               <v-toolbar-title>Group Settings</v-toolbar-title>
-              <!-- <v-spacer></v-spacer>
+              <v-spacer></v-spacer>
               <v-toolbar-items>
-                <v-btn dark text @click="createGroup">
+                <v-btn dark text>
                   Save
                 </v-btn>
-              </v-toolbar-items> -->
+              </v-toolbar-items>
             </v-toolbar>
             <v-list>
-              <v-subheader>Details</v-subheader>
+              <v-subheader>Admin Settings</v-subheader>
               <v-list-item>
                 <v-text-field
                   outlined
                   clearable
                   shaped
                   v-model="grpName"
-                  label="Group Name"
+                  label="Edit Name"
                 ></v-text-field>
               </v-list-item>
               <v-list-item>
@@ -149,39 +158,105 @@
                   shaped
                   readonly
                   v-model="inviteCode"
-                  label="Invite Code"
+                  label="Change Code"
                 >
                   <template v-slot:append-outer>
                     <v-btn text color="cyan" @click="genCode">Generate</v-btn>
                   </template>
                   <template v-slot:append>
                     <v-icon @click="copyCode">mdi-content-copy</v-icon>
-                  </template> 
+                  </template>
                 </v-text-field>
               </v-list-item>
+
+              <v-list-item ripple @click="listMembers = !listMembers">
+                <v-list-item-icon>
+                    <v-icon>mdi-account-supervisor</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Assign Admin</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-account-remove</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Remove Member</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-delete-forever</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Delete Group</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-divider></v-divider>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-account-group</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>List Members</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-share-variant</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Share</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-exit-to-app</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Exit Group</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+
+              <v-list-item ripple>
+                <v-list-item-icon>
+                    <v-icon>mdi-alert-octagon</v-icon>
+                  </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Report Group</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
-            <!-- <v-divider></v-divider>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-model="listMembers" light max-width="500">
+          <v-card>
             <v-list>
-              <v-subheader>Share</v-subheader>
               <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="green darken-2" large>mdi-whatsapp</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Whatsapp</v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon>mdi-android</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  jack reacher
+                </v-list-item-content>
               </v-list-item>
               <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="cyan" large>mdi-twitter</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Twitter</v-list-item-content>
+                <v-list-item-icon>
+                  <v-icon>mdi-web</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  peter parker
+                </v-list-item-content>
               </v-list-item>
-              <v-list-item>
-                <v-list-item-action>
-                  <v-icon color="blue darken-4" large>mdi-facebook</v-icon>
-                </v-list-item-action>
-                <v-list-item-content>Share on Facebook</v-list-item-content>
-              </v-list-item>
-            </v-list> -->
+            </v-list>
           </v-card>
         </v-dialog>
 
@@ -220,6 +295,7 @@ export default {
       msg: null,
       items: [{ title: "Map" }, { title: "Chat" }, { title: "Settings" }],
       groups: [],
+      listMembers: null,
     };
   },
   methods: {
@@ -273,10 +349,10 @@ export default {
     itemClick(option) {
       if (option == "Map") {
         console.log("Heading to Map");
-        this.$router.push({path: "/"})
+        this.$router.push({ path: "/" });
       } else if (option == "Chat") {
         console.log("Heading to chats");
-        this.$router.push({path: "/chats"})
+        this.$router.push({ path: "/chats" });
       } else if (option == "Settings") {
         this.groupSettings = true;
         console.log("Opening settings");

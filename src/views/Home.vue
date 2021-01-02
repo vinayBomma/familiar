@@ -20,8 +20,31 @@
               <l-icon :icon-size="iconSize" :icon-url="data.photo" />
               <l-popup>
                 <h3 class="my-2">{{ data.displayName }} is in Mumbai</h3>
-                <span class="body-2">Battery Level</span>
+                <v-list light>
+                  <v-list-item>
+                    <v-list-item-icon>
+                      <v-icon>mdi-battery-high</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-title>Battery Level</v-list-title>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-title>{{data.battery}}</v-list-title>
+                    </v-list-item-action>
+                  </v-list-item>
+
+                  <v-list-item ripple :href="'https://www.google.com/maps/search/?api=1&query=' + data.location" target="_blank">
+                    <v-list-item-icon>
+                      <v-icon>mdi-open-in-new</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                      <v-list-title>Get Directions</v-list-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+                <!-- <span class="body-2">Battery Level</span>
                 <span class="body-2" style="float:right">{{ data.battery }}</span>
+                <a :href="'https://www.google.com/maps/search/?api=1&query=' + data.location" target="_blank ">Open in Maps</a> -->
               </l-popup>
             </l-marker>
           </div>
@@ -60,7 +83,7 @@ export default {
       iconSize: [40, 40],
       iconUrl: "men.svg",
       mapData: [],
-      items: ['Foo', 'Bar', 'Fizz', 'Buzz'],
+      items: ["Foo", "Bar", "Fizz", "Buzz"],
     };
   },
   methods: {
