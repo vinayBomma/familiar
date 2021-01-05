@@ -19,11 +19,14 @@
                     >
                   </template>
                   <v-list>
-                    <v-list-item ripple v-for="(item, index) in items" :key="index" @click="itemClick(item.title)">
+                    <v-list-item
+                      ripple
+                      v-for="(item, index) in items"
+                      :key="index"
+                      @click="itemClick(item.title, group)"
+                    >
                       <v-list-item-content>
-                        <v-list-item-title>{{
-                          item.title
-                        }}</v-list-item-title>
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list>
@@ -102,27 +105,6 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-list>
-              <!-- <v-list> -->
-              <!-- <v-subheader>Share</v-subheader>
-                <v-list-item>
-                  <v-list-item-action>
-                    <v-icon color="green darken-2" large>mdi-whatsapp</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>Share on Whatsapp</v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-action>
-                    <v-icon color="cyan" large>mdi-twitter</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>Share on Twitter</v-list-item-content>
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-action>
-                    <v-icon color="blue darken-4" large>mdi-facebook</v-icon>
-                  </v-list-item-action>
-                  <v-list-item-content>Share on Facebook</v-list-item-content>
-                </v-list-item>
-              </v-list> -->
             </v-card>
           </v-sheet>
         </v-bottom-sheet>
@@ -142,7 +124,7 @@
               </v-toolbar-items>
             </v-toolbar>
             <v-list>
-              <v-subheader>Admin Settings</v-subheader>
+              <v-subheader>Admin Controls</v-subheader>
               <v-list-item>
                 <v-text-field
                   outlined
@@ -169,104 +151,193 @@
                 </v-text-field>
               </v-list-item>
 
-              <v-list-item ripple @click="listMembers = !listMembers">
+              <v-list-item
+                ripple
+                v-for="settings in adminSettings"
+                :key="settings.icon"
+                @click="adminControls(settings.id)"
+              >
                 <v-list-item-icon>
-                    <v-icon>mdi-account-supervisor</v-icon>
-                  </v-list-item-icon>
+                  <v-icon>{{ settings.icon }}</v-icon>
+                </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>Assign Admin</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item ripple>
-                <v-list-item-icon>
-                    <v-icon>mdi-account-remove</v-icon>
-                  </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Remove Member</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item ripple>
-                <v-list-item-icon>
-                    <v-icon>mdi-delete-forever</v-icon>
-                  </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Delete Group</v-list-item-title>
+                  <v-list-item-title>{{ settings.text }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
 
               <v-divider></v-divider>
+              <v-subheader>General</v-subheader>
 
-              <v-list-item ripple>
+              <v-list-item
+                ripple
+                v-for="setting in generalSettings"
+                :key="setting.icon"
+                @click="generalControls(setting.id)"
+              >
                 <v-list-item-icon>
-                    <v-icon>mdi-account-group</v-icon>
-                  </v-list-item-icon>
+                  <v-icon>{{ setting.icon }}</v-icon>
+                </v-list-item-icon>
                 <v-list-item-content>
-                  <v-list-item-title>List Members</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item ripple>
-                <v-list-item-icon>
-                    <v-icon>mdi-share-variant</v-icon>
-                  </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Share</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item ripple>
-                <v-list-item-icon>
-                    <v-icon>mdi-exit-to-app</v-icon>
-                  </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Exit Group</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-list-item ripple>
-                <v-list-item-icon>
-                    <v-icon>mdi-alert-octagon</v-icon>
-                  </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>Report Group</v-list-item-title>
+                  <v-list-item-title>{{ setting.text }}</v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="listMembers" light max-width="500">
+        <!-- ----------------  Assign Admin -------------------- -->
+        <v-dialog v-model="assignAdminList" max-width="500" persistent>
           <v-card>
             <v-list>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-android</v-icon>
-                </v-list-item-icon>
+              <v-list-item v-for="(users, m) in filteredUsers" :key="m">
+                <v-list-item-avatar>
+                  <img :src="users.photo" />
+                </v-list-item-avatar>
                 <v-list-item-content>
-                  jack reacher
+                  {{ users.displayName }}
                 </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-web</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  peter parker
-                </v-list-item-content>
+                <v-list-item-action>
+                  <v-checkbox
+                    color="cyan"
+                    v-model="assignAdminBox"
+                    :value="users.uid"
+                  ></v-checkbox>
+                </v-list-item-action>
               </v-list-item>
             </v-list>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="closeFeature('assign')"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text @click="saveToDB('assign')">Save</v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
+        <!-- ================================================= -->
+
+        <!-- ----------------  Remove Member -------------------- -->
+        <v-dialog v-model="removeMemberList" max-width="500" persistent>
+          <v-card>
+            <v-list>
+              <v-list-item v-for="(users, m) in userList" :key="m">
+                <v-list-item-avatar>
+                  <img :src="users.photo" />
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  {{ users.displayName }}
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-checkbox color="cyan"></v-checkbox>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="closeFeature('remove')"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text>Remove</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ================================================= -->
+
+        <!-- --------------- Delete Group ------------------ -->
+        <v-dialog v-model="deleteGroup" max-width="500">
+          <v-card>
+            <v-card-text class="overline text-center"
+              >Are you sure you want to delete this group?</v-card-text
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="deleteGroup = !deleteGroup"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text>Delete</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ============================================= -->
+
+        <!-- --------------- List Members ----------------- -->
+        <v-dialog v-model="listMembers" max-width="500" persistent>
+          <v-card>
+            <v-list>
+              <v-list-item v-for="(users, m) in userList" :key="m">
+                <v-list-item-avatar>
+                  <img :src="users.photo" />
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  {{ users.displayName }}
+                </v-list-item-content>
+                <v-list-item-action v-if="users.isAdmin">
+                  <v-chip color="teal">Group Admin</v-chip>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="cyan" text @click="closeFeature('list')"
+                >Close</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- =========================================== -->
+
+        <!-- --------------- Exit Group ------------------ -->
+        <v-dialog v-model="exitGroup" max-width="500">
+          <v-card>
+            <v-card-text class="overline text-center"
+              >Are you sure you want to exit this group?</v-card-text
+            >
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="exitGroup = !exitGroup"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text>Exit</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ========================================= -->
+
+        <!-- --------------- Report Group ------------------ -->
+        <v-dialog v-model="reportGroup" max-width="500">
+          <v-card>
+            <v-card-title class="overline justify-center"
+              >Report Group</v-card-title
+            >
+            <v-textarea
+              class="ma-4"
+              auto-grow
+              color="cyan"
+              outlined
+              label="Description"
+            ></v-textarea>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="reportGroup = !reportGroup"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text>Report</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ========================================= -->
 
         <v-snackbar
-          shaped
+          rounded="pill"
           timeout="3000"
           v-model="snackbar"
           top
           right
-          color="yellow darken-2"
+          color="teal"
+          class="text-justify"
           >{{ msg }}</v-snackbar
         >
       </v-layout>
@@ -284,6 +355,9 @@ export default {
     user() {
       return this.$store.getters.user;
     },
+    filteredUsers() {
+      return this.userList.filter(item => !item.isAdmin)
+    },
   },
   data() {
     return {
@@ -294,11 +368,117 @@ export default {
       snackbar: null,
       msg: null,
       items: [{ title: "Map" }, { title: "Chat" }, { title: "Settings" }],
+      adminSettings: [
+        { id: 1, icon: "mdi-account-supervisor", text: "Assign Admin" },
+        { id: 2, icon: "mdi-account-remove", text: "Remove Member" },
+        { id: 3, icon: "mdi-delete-forever", text: "Delete Group" },
+      ],
+      generalSettings: [
+        { id: 1, icon: "mdi-account-group", text: "List Members" },
+        { id: 2, icon: "mdi-share-variant", text: "Share" },
+        { id: 3, icon: "mdi-exit-to-app", text: "Exit Group" },
+        { id: 4, icon: "mdi-alert-octagon", text: "Report Group" },
+      ],
+      userList: [],
       groups: [],
+      groupID: null,
+      assignAdminList: null,
+      assignAdminBox: [],
+      removeMemberList: null,
+      deleteGroup: null,
       listMembers: null,
+      exitGroup: null,
+      reportGroup: null,
     };
   },
   methods: {
+    adminControls(option) {
+      if (option == 1) {
+        this.usersListFetch();
+        this.assignAdminList = !this.assignAdminList;
+      } else if (option == 2) {
+        this.usersListFetch();
+        this.removeMemberList = !this.removeMemberList;
+      } else if (option == 3) {
+        this.deleteGroup = !this.deleteGroup;
+      }
+    },
+    generalControls(option) {
+      if (option == 1) {
+        this.usersListFetch();
+        this.listMembers = !this.listMembers;
+      } else if (option == 2) {
+        console.log("share");
+      } else if (option == 3) {
+        this.exitGroup = !this.exitGroup;
+      } else if (option == 4) {
+        this.reportGroup = !this.reportGroup;
+      }
+    },
+    saveToDB(option) {
+      if (option == "assign") {
+        if (this.assignAdminBox.length > 0) {
+          let batch = db.batch();
+          let groups = db.collection("groups").doc(this.groupID);
+          let users;
+
+          this.assignAdminBox.forEach((data) => {
+            users = db.collection("users").doc(data);
+
+            batch.update(groups, {
+              admin: firebase.firestore.FieldValue.arrayUnion(data),
+            });
+
+            batch.update(users, {
+              isAdmin: firebase.firestore.FieldValue.arrayUnion(this.groupID),
+            });
+          });
+          batch.commit().then(() => {
+            this.assignAdminList = !this.assignAdminList;
+            this.userList = [];
+            this.filteredUsers = []
+            this.msg = "New admins assigned";
+            this.snackbar = true;
+          });
+          
+        } else {
+          console.log("heyooo");
+        }
+      }
+    },
+    closeFeature(feature) {
+      if (feature == "list") {
+        this.listMembers = !this.listMembers;
+        this.userList = [];
+      } else if (feature == "remove") {
+        this.removeMemberList = !this.removeMemberList;
+        this.userList = [];
+      } else if (feature == "assign") {
+        this.assignAdminList = !this.assignAdminList;
+        this.userList = [];
+        this.filteredUsers = []
+      }
+    },
+    usersListFetch() {
+      db.collection("users")
+        .where("inGroup", "array-contains", this.groupID)
+        .get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            let userData = {};
+            userData.uid = doc.id;
+            userData.photo = doc.data().photo;
+            userData.displayName = doc.data().displayName;
+            userData.isAdmin = null;
+            if (doc.data().isAdmin) {
+              if (doc.data().isAdmin.includes(this.groupID)) {
+                userData.isAdmin = true;
+              }
+            }
+            this.userList.push(userData);
+          });
+        });
+    },
     createGroup() {
       if (this.grpName && this.inviteCode) {
         let batch = db.batch();
@@ -308,16 +488,15 @@ export default {
         batch.set(groups, {
           name: this.grpName,
           inviteCode: this.inviteCode,
-          admin: this.user.data.uid,
+          admin: [this.user.data.uid],
           members: [this.user.data.uid],
           totalMembers: 1,
         });
 
         batch.update(users, {
           inGroup: firebase.firestore.FieldValue.arrayUnion(groups.id),
+          isAdmin: firebase.firestore.FieldValue.arrayUnion(groups.id),
         });
-
-        console.log(groups.id);
 
         batch.commit().then(() => {
           this.createDialog = null;
@@ -325,6 +504,9 @@ export default {
           this.snackbar = true;
           this.$router.go({ name: "groups" });
         });
+      } else {
+        this.msg = "Please fill all fields";
+        this.snackbar = true;
       }
     },
     genCode() {
@@ -346,16 +528,14 @@ export default {
         this.snackbar = true;
       }
     },
-    itemClick(option) {
+    itemClick(option, i) {
       if (option == "Map") {
-        console.log("Heading to Map");
         this.$router.push({ path: "/" });
       } else if (option == "Chat") {
-        console.log("Heading to chats");
         this.$router.push({ path: "/chats" });
       } else if (option == "Settings") {
         this.groupSettings = true;
-        console.log("Opening settings");
+        this.groupID = i.id;
       }
     },
   },
@@ -366,6 +546,7 @@ export default {
       .then((querySnapshot) => {
         querySnapshot.forEach((doc) => {
           let groupData = {};
+          groupData.id = doc.id;
           groupData.name = doc.data().name;
           groupData.members = doc.data().totalMembers;
           this.groups.push(groupData);

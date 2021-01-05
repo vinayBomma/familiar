@@ -42,9 +42,6 @@
                     </v-list-item-content>
                   </v-list-item>
                 </v-list>
-                <!-- <span class="body-2">Battery Level</span>
-                <span class="body-2" style="float:right">{{ data.battery }}</span>
-                <a :href="'https://www.google.com/maps/search/?api=1&query=' + data.location" target="_blank ">Open in Maps</a> -->
               </l-popup>
             </l-marker>
           </div>
