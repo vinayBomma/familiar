@@ -116,42 +116,10 @@
                 <v-icon>mdi-close</v-icon>
               </v-btn>
               <v-toolbar-title>Group Settings</v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-toolbar-items>
-                <v-btn dark text>
-                  Save
-                </v-btn>
-              </v-toolbar-items>
             </v-toolbar>
             <v-list>
               <div v-if="showAdminControls">
                 <v-subheader>Admin Controls</v-subheader>
-                <v-list-item>
-                  <v-text-field
-                    outlined
-                    clearable
-                    shaped
-                    v-model="grpName"
-                    label="Edit Name"
-                  ></v-text-field>
-                </v-list-item>
-                <v-list-item>
-                  <v-text-field
-                    outlined
-                    shaped
-                    readonly
-                    v-model="inviteCode"
-                    label="Change Code"
-                  >
-                    <template v-slot:append-outer>
-                      <v-btn text color="cyan" @click="genCode">Generate</v-btn>
-                    </template>
-                    <template v-slot:append>
-                      <v-icon @click="copyCode">mdi-content-copy</v-icon>
-                    </template>
-                  </v-text-field>
-                </v-list-item>
-
                 <v-list-item
                   ripple
                   v-for="settings in adminSettings"
@@ -163,6 +131,9 @@
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>{{ settings.text }}</v-list-item-title>
+                    <v-list-item-subtitle>{{
+                      settings.desc_text
+                    }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
               </div>
@@ -181,11 +152,80 @@
                 </v-list-item-icon>
                 <v-list-item-content>
                   <v-list-item-title>{{ setting.text }}</v-list-item-title>
+                  <v-list-item-subtitle>{{
+                    setting.desc_text
+                  }}</v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
             </v-list>
           </v-card>
         </v-dialog>
+
+        <!-- ----------------  Edit Name ------------------ -->
+        <v-dialog v-model="editNameDialog" max-width="500" persistent>
+          <v-card>
+            <v-card-title class="overline justify-center"
+              >Edit Name</v-card-title
+            >
+            <v-card-text>
+              <v-text-field
+                color="cyan"
+                outlined
+                clearable
+                shaped
+                v-model="grpNameSetting"
+                label="Edit Name"
+              >
+              </v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="editNameDialog = !editNameDialog"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text @click="saveToDB('editName')"
+                >Save</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ============================================== -->
+
+        <!-- ----------------  Change Code ------------------ -->
+
+        <v-dialog v-model="editCodeDialog" max-width="500" persistent>
+          <v-card>
+            <v-card-title class="overline justify-center"
+              >Change Code</v-card-title
+            >
+            <v-card-text>
+              <v-text-field
+                outlined
+                shaped
+                readonly
+                v-model="inviteCodeSetting"
+                label="Change Code"
+              >
+                <template v-slot:append>
+                  <v-icon @click="saveToDB('copyCode')"
+                    >mdi-content-copy</v-icon
+                  >
+                </template>
+              </v-text-field>
+            </v-card-text>
+            <v-card-actions>
+              <v-btn color="cyan" text @click="genCode()">Generate</v-btn>
+              <v-spacer></v-spacer>
+              <v-btn color="grey" text @click="editCodeDialog = !editCodeDialog"
+                >Cancel</v-btn
+              >
+              <v-btn color="cyan" text @click="saveToDB('changeCode')"
+                >Save</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <!-- ============================================== -->
 
         <!-- ----------------  Assign Admin -------------------- -->
         <v-dialog v-model="assignAdminList" max-width="500" persistent>
@@ -322,25 +362,29 @@
             <v-card-title class="overline justify-center"
               >Report Group</v-card-title
             >
-            <v-textarea
-              class="ma-4"
-              auto-grow
-              color="cyan"
-              outlined
-              label="Description"
-              v-model="reportText"
-            ></v-textarea>
+            <v-card-text>
+              <v-textarea
+                auto-grow
+                color="cyan"
+                outlined
+                label="Description"
+                v-model="reportText"
+              ></v-textarea>
+            </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="grey" text @click="reportGroup = !reportGroup"
                 >Cancel</v-btn
               >
-              <v-btn color="cyan" text @click="saveToDB('report')">Report</v-btn>
+              <v-btn color="cyan" text @click="saveToDB('report')"
+                >Report</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
         <!-- ========================================= -->
 
+        <!-- ----------------  Snackbar ------------------ -->
         <v-snackbar
           rounded="pill"
           timeout="3000"
@@ -351,6 +395,7 @@
           class="text-justify"
           >{{ msg }}</v-snackbar
         >
+        <!-- ============================================== -->
       </v-layout>
     </v-container>
   </div>
@@ -380,19 +425,76 @@ export default {
       msg: null,
       items: [{ title: "Map" }, { title: "Chat" }, { title: "Settings" }],
       adminSettings: [
-        { id: 1, icon: "mdi-account-supervisor", text: "Assign Admin" },
-        { id: 2, icon: "mdi-account-remove", text: "Remove Member" },
-        { id: 3, icon: "mdi-delete-forever", text: "Delete Group" },
+        {
+          id: 1,
+          icon: "mdi-pencil",
+          text: "Edit Name",
+          desc_text: "Edit group name",
+        },
+        {
+          id: 2,
+          icon: "mdi-key",
+          text: "Change Code",
+          desc_text: "Change invite code of group",
+        },
+        {
+          id: 3,
+          icon: "mdi-account-supervisor",
+          text: "Assign Admin",
+          desc_text: "Assign admin status to members",
+        },
+        {
+          id: 4,
+          icon: "mdi-account-remove",
+          text: "Remove Member",
+          desc_text: "Remove members from the group",
+        },
+        {
+          id: 5,
+          icon: "mdi-delete-forever",
+          text: "Delete Group",
+          desc_text: "Delete the group. This can't be undone!",
+        },
       ],
       generalSettings: [
-        { id: 1, icon: "mdi-account-group", text: "List Members" },
-        { id: 2, icon: "mdi-share-variant", text: "Share" },
-        { id: 3, icon: "mdi-exit-to-app", text: "Exit Group" },
-        { id: 4, icon: "mdi-alert-octagon", text: "Report Group" },
+        {
+          id: 1,
+          icon: "mdi-account-group",
+          text: "List Members",
+          desc_text: "List all the members in the group",
+        },
+        {
+          id: 2,
+          icon: "mdi-share-variant",
+          text: "Share",
+          desc_text: "Share the group with your contacts",
+        },
+        {
+          id: 3,
+          icon: "mdi-content-copy",
+          text: "Copy Invite Code",
+          desc_text: "Copy invite code to clipboard",
+        },
+        {
+          id: 4,
+          icon: "mdi-exit-to-app",
+          text: "Exit Group",
+          desc_text: "Leave the group",
+        },
+        {
+          id: 5,
+          icon: "mdi-alert-octagon",
+          text: "Report Group",
+          desc_text: "Report this group to the developer",
+        },
       ],
+      grpNameSetting: null,
+      inviteCodeSetting: null,
       userList: [],
       groups: [],
       groupID: null,
+      editNameDialog: null,
+      editCodeDialog: null,
       showAdminControls: null,
       assignAdminList: null,
       assignAdminBox: [],
@@ -408,12 +510,16 @@ export default {
   methods: {
     adminControls(option) {
       if (option == 1) {
+        this.editNameDialog = !this.editNameDialog;
+      } else if (option == 2) {
+        this.editCodeDialog = !this.editCodeDialog;
+      } else if (option == 3) {
         this.usersListFetch();
         this.assignAdminList = !this.assignAdminList;
-      } else if (option == 2) {
+      } else if (option == 4) {
         this.usersListFetch();
         this.removeMemberList = !this.removeMemberList;
-      } else if (option == 3) {
+      } else if (option == 5) {
         this.deleteGroup = !this.deleteGroup;
       }
     },
@@ -424,8 +530,14 @@ export default {
       } else if (option == 2) {
         console.log("share");
       } else if (option == 3) {
-        this.exitGroup = !this.exitGroup;
+        if (this.inviteCodeSetting) {
+          navigator.clipboard.writeText(this.inviteCodeSetting);
+          this.msg = "Invite code copied to clipboard";
+          this.snackbar = true;
+        }
       } else if (option == 4) {
+        this.exitGroup = !this.exitGroup;
+      } else if (option == 5) {
         this.reportGroup = !this.reportGroup;
       }
     },
@@ -527,14 +639,58 @@ export default {
           this.snackbar = true;
           this.$router.go({ name: "groups" });
         });
-      } else if(option == 'report'){
-        if(this.reportText){
-          this.msg = "Report sent successfully"
+      } else if (option == "report") {
+        if (this.reportText) {
+          db.collection("reports")
+            .doc()
+            .set({
+              author: this.user.data.displayName,
+              text: this.reportText,
+              groupReported: this.grpNameSetting,
+            });
+          this.msg = "Report sent successfully";
           this.snackbar = true;
-          this.reportGroup = !this.reportGroup
-        }else{
-          this.msg = "Report text is empty"
-          this.snackbar = true
+          this.reportGroup = !this.reportGroup;
+        } else {
+          this.msg = "Report text is empty";
+          this.snackbar = true;
+        }
+      } else if (option == "editName") {
+        if (this.grpNameSetting) {
+          db.collection("groups")
+            .doc(this.groupID)
+            .set(
+              {
+                name: this.grpNameSetting,
+              },
+              { merge: true }
+            );
+          this.msg = "Group name edited successfully";
+          this.snackbar = true;
+          this.editNameDialog = !this.editNameDialog;
+        } else {
+          this.msg = "Group name is empty";
+          this.snackbar = true;
+        }
+      } else if (option == "copyCode") {
+        if (this.inviteCodeSetting) {
+          navigator.clipboard.writeText(this.inviteCodeSetting);
+          this.msg = "Invite code copied to clipboard";
+          this.snackbar = true;
+        }
+      } else if (option == "changeCode") {
+        if (this.inviteCodeSetting) {
+          db.collection("groups")
+            .doc(this.groupID)
+            .set(
+              {
+                inviteCode: this.inviteCodeSetting,
+              },
+              { merge: true }
+            );
+          this.msg = "Invite code changed successfully";
+          this.snackbar = true;
+          this.editCodeDialog = !this.editCodeDialog;
         }
       }
     },
@@ -611,6 +767,7 @@ export default {
         );
       }
       this.inviteCode = result;
+      this.inviteCodeSetting = result;
     },
     copyCode() {
       if (this.inviteCode) {
@@ -633,6 +790,8 @@ export default {
             if (doc.data().admin.includes(this.user.data.uid)) {
               this.showAdminControls = true;
             }
+            this.grpNameSetting = doc.data().name;
+            this.inviteCodeSetting = doc.data().inviteCode;
           });
         this.groupSettings = true;
       }
