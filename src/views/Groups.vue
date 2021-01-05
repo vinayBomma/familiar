@@ -124,48 +124,50 @@
               </v-toolbar-items>
             </v-toolbar>
             <v-list>
-              <v-subheader>Admin Controls</v-subheader>
-              <v-list-item>
-                <v-text-field
-                  outlined
-                  clearable
-                  shaped
-                  v-model="grpName"
-                  label="Edit Name"
-                ></v-text-field>
-              </v-list-item>
-              <v-list-item>
-                <v-text-field
-                  outlined
-                  shaped
-                  readonly
-                  v-model="inviteCode"
-                  label="Change Code"
+              <div v-if="showAdminControls">
+                <v-subheader>Admin Controls</v-subheader>
+                <v-list-item>
+                  <v-text-field
+                    outlined
+                    clearable
+                    shaped
+                    v-model="grpName"
+                    label="Edit Name"
+                  ></v-text-field>
+                </v-list-item>
+                <v-list-item>
+                  <v-text-field
+                    outlined
+                    shaped
+                    readonly
+                    v-model="inviteCode"
+                    label="Change Code"
+                  >
+                    <template v-slot:append-outer>
+                      <v-btn text color="cyan" @click="genCode">Generate</v-btn>
+                    </template>
+                    <template v-slot:append>
+                      <v-icon @click="copyCode">mdi-content-copy</v-icon>
+                    </template>
+                  </v-text-field>
+                </v-list-item>
+
+                <v-list-item
+                  ripple
+                  v-for="settings in adminSettings"
+                  :key="settings.icon"
+                  @click="adminControls(settings.id)"
                 >
-                  <template v-slot:append-outer>
-                    <v-btn text color="cyan" @click="genCode">Generate</v-btn>
-                  </template>
-                  <template v-slot:append>
-                    <v-icon @click="copyCode">mdi-content-copy</v-icon>
-                  </template>
-                </v-text-field>
-              </v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>{{ settings.icon }}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ settings.text }}</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </div>
 
-              <v-list-item
-                ripple
-                v-for="settings in adminSettings"
-                :key="settings.icon"
-                @click="adminControls(settings.id)"
-              >
-                <v-list-item-icon>
-                  <v-icon>{{ settings.icon }}</v-icon>
-                </v-list-item-icon>
-                <v-list-item-content>
-                  <v-list-item-title>{{ settings.text }}</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-
-              <v-divider></v-divider>
+              <v-divider v-if="showAdminControls"></v-divider>
               <v-subheader>General</v-subheader>
 
               <v-list-item
@@ -229,7 +231,11 @@
                   {{ users.displayName }}
                 </v-list-item-content>
                 <v-list-item-action>
-                  <v-checkbox color="cyan"></v-checkbox>
+                  <v-checkbox
+                    color="cyan"
+                    v-model="removeMemberBox"
+                    :value="users.uid"
+                  ></v-checkbox>
                 </v-list-item-action>
               </v-list-item>
             </v-list>
@@ -239,7 +245,9 @@
               <v-btn color="grey" text @click="closeFeature('remove')"
                 >Cancel</v-btn
               >
-              <v-btn color="cyan" text>Remove</v-btn>
+              <v-btn color="cyan" text @click="saveToDB('remove')"
+                >Remove</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -256,7 +264,9 @@
               <v-btn color="grey" text @click="deleteGroup = !deleteGroup"
                 >Cancel</v-btn
               >
-              <v-btn color="cyan" text>Delete</v-btn>
+              <v-btn color="cyan" text @click="saveToDB('delete')"
+                >Delete</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -300,7 +310,7 @@
               <v-btn color="grey" text @click="exitGroup = !exitGroup"
                 >Cancel</v-btn
               >
-              <v-btn color="cyan" text>Exit</v-btn>
+              <v-btn color="cyan" text @click="saveToDB('exit')">Exit</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -318,13 +328,14 @@
               color="cyan"
               outlined
               label="Description"
+              v-model="reportText"
             ></v-textarea>
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="grey" text @click="reportGroup = !reportGroup"
                 >Cancel</v-btn
               >
-              <v-btn color="cyan" text>Report</v-btn>
+              <v-btn color="cyan" text @click="saveToDB('report')">Report</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -356,7 +367,7 @@ export default {
       return this.$store.getters.user;
     },
     filteredUsers() {
-      return this.userList.filter(item => !item.isAdmin)
+      return this.userList.filter((item) => !item.isAdmin);
     },
   },
   data() {
@@ -382,13 +393,16 @@ export default {
       userList: [],
       groups: [],
       groupID: null,
+      showAdminControls: null,
       assignAdminList: null,
       assignAdminBox: [],
       removeMemberList: null,
+      removeMemberBox: [],
       deleteGroup: null,
       listMembers: null,
       exitGroup: null,
       reportGroup: null,
+      reportText: null,
     };
   },
   methods: {
@@ -435,14 +449,92 @@ export default {
           });
           batch.commit().then(() => {
             this.assignAdminList = !this.assignAdminList;
+            this.assignAdminBox = [];
             this.userList = [];
-            this.filteredUsers = []
             this.msg = "New admins assigned";
             this.snackbar = true;
           });
-          
         } else {
-          console.log("heyooo");
+          this.msg = "Select atleast one user";
+          this.snackbar = true;
+        }
+      } else if (option == "remove") {
+        if (this.removeMemberBox.length > 0) {
+          let batch = db.batch();
+          let groups = db.collection("groups").doc(this.groupID);
+          let users;
+
+          this.removeMemberBox.forEach((data) => {
+            users = db.collection("users").doc(data);
+
+            batch.update(groups, {
+              members: firebase.firestore.FieldValue.arrayRemove(data),
+            });
+
+            batch.update(groups, {
+              totalMembers: firebase.firestore.FieldValue.increment(-1),
+            });
+
+            batch.update(users, {
+              inGroup: firebase.firestore.FieldValue.arrayRemove(this.groupID),
+            });
+          });
+          batch.commit().then(() => {
+            this.removeMemberList = !this.removeMemberList;
+            this.removeMemberBox = [];
+            this.userList = [];
+            this.msg = "Users removed successfully";
+            this.snackbar = true;
+          });
+        } else {
+          this.msg = "Select atleast one user";
+          this.snackbar = true;
+        }
+      } else if (option == "delete") {
+        db.collection("groups")
+          .doc(this.groupID)
+          .delete()
+          .then(() => {
+            this.msg = "Group deleted successfully";
+            this.snackbar = true;
+            this.$router.go({ name: "groups" });
+          })
+          .catch((err) => {
+            console.log("Errarta: ", err);
+          });
+      } else if (option == "exit") {
+        let batch = db.batch();
+        let groups = db.collection("groups").doc(this.groupID);
+        let users = db.collection("users").doc(this.user.data.uid);
+
+        batch.update(groups, {
+          members: firebase.firestore.FieldValue.arrayRemove(
+            this.user.data.uid
+          ),
+        });
+
+        batch.update(groups, {
+          totalMembers: firebase.firestore.FieldValue.increment(-1),
+        });
+
+        batch.update(users, {
+          inGroup: firebase.firestore.FieldValue.arrayRemove(this.groupID),
+        });
+
+        batch.commit().then(() => {
+          this.userList = [];
+          this.msg = "Exited the group successfully";
+          this.snackbar = true;
+          this.$router.go({ name: "groups" });
+        });
+      } else if(option == 'report'){
+        if(this.reportText){
+          this.msg = "Report sent successfully"
+          this.snackbar = true;
+          this.reportGroup = !this.reportGroup
+        }else{
+          this.msg = "Report text is empty"
+          this.snackbar = true
         }
       }
     },
@@ -456,7 +548,6 @@ export default {
       } else if (feature == "assign") {
         this.assignAdminList = !this.assignAdminList;
         this.userList = [];
-        this.filteredUsers = []
       }
     },
     usersListFetch() {
@@ -534,8 +625,16 @@ export default {
       } else if (option == "Chat") {
         this.$router.push({ path: "/chats" });
       } else if (option == "Settings") {
-        this.groupSettings = true;
         this.groupID = i.id;
+        db.collection("groups")
+          .doc(this.groupID)
+          .get()
+          .then((doc) => {
+            if (doc.data().admin.includes(this.user.data.uid)) {
+              this.showAdminControls = true;
+            }
+          });
+        this.groupSettings = true;
       }
     },
   },
