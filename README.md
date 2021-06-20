@@ -1,4 +1,6 @@
-# familiar
+# Familiar
+
+This app doesn't have a web address yet.
 
 ## Project setup
 ```
